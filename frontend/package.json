@@ -1,0 +1,85 @@
+{
+  "name": "frontend",
+  "proxy": "http://127.0.0.1:5000",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^6.1.1",
+    "@material-ui/icons": "^4.11.2",
+    "@react-pdf/renderer": "^1.6.13",
+    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/react": "^11.1.1",
+    "@testing-library/user-event": "^12.2.0",
+    "axios": "^0.21.4",
+    "bootstrap": "^5.3.3",
+    "html2canvas": "^1.0.0-rc.7",
+    "jspdf": "^1.4.1",
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.6.8",
+    "react-cool-img": "^1.2.9",
+    "react-dom": "^16.13.1",
+    "react-emoji": "^0.5.0",
+    "react-ga": "^3.3.0",
+    "react-helmet": "^6.1.0",
+    "react-hook-form": "^6.15.5",
+    "react-icons": "^4.12.0",
+    "react-image-file-resizer": "^0.4.2",
+    "react-instantsearch-dom": "^6.8.2",
+    "react-lazy-load-image-component": "^1.5.1",
+    "react-loadingg": "^1.7.2",
+    "react-notify-toast": "^0.5.1",
+    "react-paypal-button-v2": "^2.6.2",
+    "react-pdf": "^5.2.0",
+    "react-redux": "^7.2.9",
+    "react-router": "^5.2.0",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.0",
+    "react-scroll-to-bottom": "^4.1.0",
+    "react-search-field": "^1.2.0",
+    "react-shimmer": "^3.1.1",
+    "react-slick": "^0.27.13",
+    "react-spinners": "^0.10.6",
+    "react-to-pdf": "0.0.13",
+    "react-toast-notifications": "^2.4.4",
+    "react-validation": "^3.0.7",
+    "react-window": "^1.8.6",
+    "redux": "^4.2.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.4.2",
+    "socket.io-client": "^3.0.4",
+    "sweetalert": "^2.1.2",
+    "web-vitals": "^0.2.4",
+    "webpack-cli": "^4.6.0"
+  },
+  "scripts": {
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.3",
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.35",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.3"
+  }
+}

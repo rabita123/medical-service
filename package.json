@@ -1,0 +1,53 @@
+{
+  "name": "doctor",
+  "version": "1.0.0",
+  "build-webpack": "webpack -p",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server",
+    "server": "nodemon backend/server",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node backend/seeder",
+    "data:destroy": "node backend/seeder -d",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@craco/craco": "^7.0.0",
+    "@material-ui/core": "^4.11.2",
+    "algoliasearch": "^4.8.3",
+    "axios": "^0.21.0",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.5.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jquery": "^3.5.1",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^7.0.0",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.6.0",
+    "notifyjs": "^3.0.0",
+    "path": "^0.12.7",
+    "popper.js": "^1.16.1",
+    "slick-carousel": "^1.8.1",
+    "socket.io": "^4.7.0",
+    "sweetalert2": "^10.13.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.2"
+  },
+  "description": ""
+}

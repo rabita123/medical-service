@@ -1,0 +1,503 @@
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Slider Styles */
+.slick-slider {
+  margin: 0 -15px;
+  position: relative;
+}
+
+.slick-slide {
+  margin: 0 15px;
+  outline: none !important;
+}
+
+.specialities-slider .slick-slide img {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.speicality-img {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.speicality-img span {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.speicality-img span i {
+  color: #2E3842;
+  font-size: 12px;
+}
+
+.doctor-slider .slick-slide {
+  display: block;
+  padding: 15px;
+}
+
+.profile-widget {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  margin-bottom: 30px;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 15px;
+}
+
+.profile-widget:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+}
+
+.doc-img {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.doc-img img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.pro-content {
+  padding: 15px;
+}
+
+.pro-content .title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.pro-content .title a {
+  color: #272b41;
+  text-decoration: none;
+}
+
+.pro-content .title a:hover {
+  color: #20c0f3;
+}
+
+.pro-content .speciality {
+  font-size: 14px;
+  color: #757575;
+  margin-bottom: 15px;
+}
+
+.rating {
+  margin-bottom: 15px;
+}
+
+.rating i {
+  color: #ffd700;
+  font-size: 14px;
+}
+
+.rating i.filled {
+  color: #ffd700;
+}
+
+.available-info {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px;
+}
+
+.available-info li {
+  color: #757575;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.available-info li i {
+  margin-right: 5px;
+  width: 20px;
+}
+
+.row-sm {
+  margin: -5px;
+}
+
+.row-sm > div {
+  padding: 5px;
+}
+
+.view-btn, .book-btn {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.view-btn {
+  background: #fff;
+  border: 1px solid #20c0f3;
+  color: #20c0f3;
+}
+
+.view-btn:hover {
+  background: #20c0f3;
+  color: #fff;
+}
+
+.book-btn {
+  background: #20c0f3;
+  border: 1px solid #20c0f3;
+  color: #fff;
+}
+
+.book-btn:hover {
+  background: #0da8d9;
+  border-color: #0da8d9;
+}
+
+/* Search Box Styles */
+.section-search {
+  background: #f9f9f9;
+  padding: 60px 0;
+}
+
+.search-box {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-box form {
+  display: flex;
+  align-items: center;
+}
+
+.search-box .form-group {
+  flex: 1;
+  margin-bottom: 0;
+  margin-right: 15px;
+}
+
+.search-box .form-control {
+  height: 50px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.search-btn {
+  height: 50px;
+  padding: 0 30px;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 4px;
+  background: #20c0f3;
+  border: none;
+  color: #fff;
+}
+
+.search-btn:hover {
+  background: #0da8d9;
+}
+
+/* Section Headers */
+.section-header {
+  margin-bottom: 40px;
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://via.placeholder.com/1920x600?text=Welcome+to+Our+Healthcare+Platform');
+  background-size: cover;
+  background-position: center;
+  padding: 60px 0;
+  color: #fff;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: inherit;
+}
+
+.section-header .sub-title {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+/* Responsive Styles */
+@media (max-width: 991.98px) {
+  .section-header h2 {
+    font-size: 28px;
+  }
+  
+  .search-box {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .section-header h2 {
+    font-size: 24px;
+  }
+  
+  .search-box form {
+    flex-direction: column;
+  }
+  
+  .search-box .form-group {
+    margin-right: 0;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .search-btn {
+    width: 100%;
+  }
+}
+
+/* Banner Styles */
+.banner-wrapper {
+  position: relative;
+  padding: 50px 0;
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://via.placeholder.com/1920x600?text=Welcome+to+Our+Healthcare+Platform');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.banner-header h1 {
+  font-size: 48px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.banner-header p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+/* Fix clickable links */
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.slick-slide {
+  pointer-events: all !important;
+}
+
+.profile-widget {
+  cursor: pointer;
+}
+
+/* Make buttons more prominent */
+.btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Add container padding */
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* Section Spacing */
+.section {
+  padding: 80px 0;
+  position: relative;
+  background: #fff;
+}
+
+.section-search {
+  padding: 0;
+  background: transparent;
+}
+
+/* Fix slider navigation */
+.slick-prev,
+.slick-next {
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  background: #fff;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: #272b41;
+  font-size: 20px;
+  opacity: 1;
+}
+
+.slick-prev {
+  left: -20px;
+}
+
+.slick-next {
+  right: -20px;
+}
+
+/* Fix dots navigation */
+.slick-dots {
+  bottom: -40px;
+}
+
+.slick-dots li button:before {
+  font-size: 10px;
+  color: #272b41;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #20c0f3;
+}
+
+/* Fix speciality items */
+.speicality-item {
+  display: block !important;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.speicality-item p {
+  margin-top: 10px;
+  font-weight: 500;
+  color: #272b41;
+}
+
+/* Fix profile widgets */
+.profile-widget {
+  display: block !important;
+  height: 100%;
+}
+
+.profile-widget .doc-img {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  padding-top: 75%;
+}
+
+.profile-widget .doc-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Add hover effects */
+.speicality-item:hover .speicality-img img {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.profile-widget:hover {
+  transform: translateY(-5px);
+}
+
+/* Fix button styles */
+.btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #20c0f3;
+  border-color: #20c0f3;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #0da8d9;
+  border-color: #0da8d9;
+}

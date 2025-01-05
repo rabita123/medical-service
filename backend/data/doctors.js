@@ -1,0 +1,68 @@
+const doctors = [
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+  {
+    name: "Dr. Darren Elder",
+    image: "assets/img/doctors/doctor-thumb-02.jpg",
+    education: "BDS, MDS - Oral & Maxillofacial Surgery",
+    specialist: "Dentist",
+    location: "Newyork, USA",
+    price: 89.99,
+  },
+];
+
+export default doctors;
