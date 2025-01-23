@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "build-webpack": "webpack -p",
   "engines": {
-    "node": "16.x",
-    "npm": "8.x"
+    "node": "22.x",
+    "npm": "10.x"
   },
   "main": "server.js",
   "type": "module",
@@ -15,7 +15,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d",
-    "build": "cd frontend && set NODE_OPTIONS=--openssl-legacy-provider && npm install --legacy-peer-deps && npm run build"
+    "build": "cd frontend && export SET NODE_OPTIONS=--openssl-legacy-provider && npm install --legacy-peer-deps && npm run build"
   },
   "author": "",
   "license": "ISC",
