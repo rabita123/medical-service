@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "build-webpack": "webpack -p",
   "engines": {
-    "node": "22.x",
-    "npm": "10.x"
+    "node": "16.x",
+    "npm": "8.x"
   },
   "main": "server.js",
   "type": "module",
@@ -15,7 +15,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "cd frontend && set NODE_OPTIONS=--openssl-legacy-provider && npm install --legacy-peer-deps && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.5.3",
     "colors": "^1.4.0",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.17.1",
