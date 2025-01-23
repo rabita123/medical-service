@@ -13,7 +13,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd frontend && npm install && NODE_OPTIONS='--openssl-legacy-provider' npm run build"
+        "buildCommand": "chmod +x frontend/vercel-build.sh && cd frontend && ./vercel-build.sh"
       }
     }
   ],
