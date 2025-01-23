@@ -13,7 +13,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && node --max_old_space_size=4096 node_modules/.bin/react-scripts build",
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
         "nodeVersion": "22.x"
       }
     }
@@ -33,7 +33,6 @@
     "NODE_ENV": "production",
     "CI": "false",
     "DISABLE_ESLINT_PLUGIN": "true",
-    "NODE_OPTIONS": "--max_old_space_size=4096 --openssl-legacy-provider",
     "SKIP_PREFLIGHT_CHECK": "true",
     "GENERATE_SOURCEMAP": "false"
   }
