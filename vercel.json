@@ -5,7 +5,7 @@
       "src": "backend/server.js",
       "use": "@vercel/node",
       "config": {
-        "nodeVersion": "16.x"
+        "nodeVersion": "14.x"
       }
     },
     {
@@ -13,7 +13,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "chmod +x frontend/vercel-build.sh && cd frontend && ./vercel-build.sh"
+        "buildCommand": "cd frontend && npm install && npm run build"
       }
     }
   ],
@@ -28,6 +28,6 @@
     }
   ],
   "env": {
-    "NODE_OPTIONS": "--openssl-legacy-provider"
+    "NODE_VERSION": "14.17.0"
   }
 } 
