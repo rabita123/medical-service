@@ -17,23 +17,26 @@ import {
   SLIDER_UPDATE_SUCCESS,
   SLIDER_UPDATE_FAIL,
   SLIDER_UPDATE_RESET,
+  SLIDER_LIST_REQUEST,
+  SLIDER_LIST_SUCCESS,
+  SLIDER_LIST_FAIL,
 } from "../constants/sliderConstants";
 
 import { logout } from "./userActions";
 
 export const listSliders = () => async (dispatch) => {
   try {
-    dispatch({ type: "SLIDER_LIST_REQUEST" });
+    dispatch({ type: SLIDER_LIST_REQUEST });
 
     const { data } = await axios.get("/api/sliders");
 
     dispatch({
-      type: "SLIDER_LIST_SUCCESS",
+      type: SLIDER_LIST_SUCCESS,
       payload: data,
     });
   } catch (error) {
     dispatch({
-      type: "SLIDER_LIST_FAIL",
+      type: SLIDER_LIST_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

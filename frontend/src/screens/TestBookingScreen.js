@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getTestDetails, bookTest } from '../actions/testActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const TestBookingScreen = () => {
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [appointmentDate, setAppointmentDate] = useState('');
+  const [formData, setFormData] = useState({
+    patientName: '',
+    patientEmail: '',
+    patientPhone: '',
+    patientAge: '',
+    patientGender: '',
+    appointmentDate: '',
+  });
   const [appointmentTime, setAppointmentTime] = useState('');
-  const [patientName, setPatientName] = useState('');
-  const [patientEmail, setPatientEmail] = useState('');
-  const [patientPhone, setPatientPhone] = useState('');
-  const [patientAge, setPatientAge] = useState('');
-  const [patientGender, setPatientGender] = useState('');
   const [formError, setFormError] = useState(null);
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -31,20 +33,23 @@ const TestBookingScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
+      return;
     }
-  }, [userInfo, history]);
 
-  useEffect(() => {
-    console.log('Fetching test details for ID:', id);
+    if (!id) {
+      navigate('/tests');
+      return;
+    }
+
     dispatch(getTestDetails(id));
-  }, [dispatch, id]);
+  }, [dispatch, id, userInfo, navigate]);
 
   useEffect(() => {
     if (bookingSuccess) {
-      history.push('/booking-success');
+      navigate('/booking-success');
     }
-  }, [bookingSuccess, history]);
+  }, [bookingSuccess, navigate]);
 
   useEffect(() => {
     if (error) {
@@ -57,38 +62,45 @@ const TestBookingScreen = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!appointmentDate || !appointmentTime) {
+    if (!formData.appointmentDate || !appointmentTime) {
       setFormError('Please select both date and time');
       return;
     }
 
-    if (!patientName || !patientEmail || !patientPhone || !patientAge || !patientGender) {
+    if (!formData.patientName || !formData.patientEmail || !formData.patientPhone || !formData.patientAge || !formData.patientGender) {
       setFormError('Please fill in all patient details');
       return;
     }
 
-    const combinedDateTime = new Date(`${appointmentDate}T${appointmentTime}`);
+    const combinedDateTime = new Date(`${formData.appointmentDate}T${appointmentTime}`);
     const bookingData = {
       appointmentDate: combinedDateTime.toISOString(),
-      patientName,
-      patientEmail,
-      patientPhone,
-      patientAge: Number(patientAge),
-      patientGender
+      patientName: formData.patientName,
+      patientEmail: formData.patientEmail,
+      patientPhone: formData.patientPhone,
+      patientAge: Number(formData.patientAge),
+      patientGender: formData.patientGender
     };
 
     console.log('Sending booking data:', bookingData);
     dispatch(bookTest(id, bookingData));
   };
 
-  // Get tomorrow's date as minimum date
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   const getTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   };
 
-  if (loading) {
+  if (loading || bookingLoading) {
     return (
       <Container className="py-5">
         <Loader />
@@ -106,10 +118,10 @@ const TestBookingScreen = () => {
     );
   }
 
-  if (!test) {
+  if (!test || !test._id) {
     return (
       <Container className="py-5">
-        <Message>Test not found. Please try again or contact support.</Message>
+        <Message variant="danger">Test not found. Please try again or contact support.</Message>
       </Container>
     );
   }
@@ -153,8 +165,9 @@ const TestBookingScreen = () => {
                   <Form.Label>Full Name</Form.Label>
                   <Form.Control
                     type="text"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
+                    name="patientName"
+                    value={formData.patientName}
+                    onChange={handleChange}
                     required
                   />
                 </Form.Group>
@@ -163,8 +176,9 @@ const TestBookingScreen = () => {
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"
-                    value={patientEmail}
-                    onChange={(e) => setPatientEmail(e.target.value)}
+                    name="patientEmail"
+                    value={formData.patientEmail}
+                    onChange={handleChange}
                     required
                   />
                 </Form.Group>
@@ -173,8 +187,9 @@ const TestBookingScreen = () => {
                   <Form.Label>Phone Number</Form.Label>
                   <Form.Control
                     type="tel"
-                    value={patientPhone}
-                    onChange={(e) => setPatientPhone(e.target.value)}
+                    name="patientPhone"
+                    value={formData.patientPhone}
+                    onChange={handleChange}
                     required
                   />
                 </Form.Group>
@@ -183,26 +198,28 @@ const TestBookingScreen = () => {
                   <Form.Label>Age</Form.Label>
                   <Form.Control
                     type="number"
-                    value={patientAge}
-                    onChange={(e) => setPatientAge(e.target.value)}
+                    name="patientAge"
+                    value={formData.patientAge}
+                    onChange={handleChange}
                     required
                     min="0"
                     max="150"
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-4">
+                <Form.Group className="mb-3">
                   <Form.Label>Gender</Form.Label>
                   <Form.Control
                     as="select"
-                    value={patientGender}
-                    onChange={(e) => setPatientGender(e.target.value)}
+                    name="patientGender"
+                    value={formData.patientGender}
+                    onChange={handleChange}
                     required
                   >
                     <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
                   </Form.Control>
                 </Form.Group>
 
@@ -212,8 +229,9 @@ const TestBookingScreen = () => {
                   <Form.Control
                     type="date"
                     min={getTomorrowDate()}
-                    value={appointmentDate}
-                    onChange={(e) => setAppointmentDate(e.target.value)}
+                    name="appointmentDate"
+                    value={formData.appointmentDate}
+                    onChange={handleChange}
                     required
                   />
                 </Form.Group>
@@ -224,6 +242,7 @@ const TestBookingScreen = () => {
                     type="time"
                     min="09:00"
                     max="17:00"
+                    name="appointmentTime"
                     value={appointmentTime}
                     onChange={(e) => setAppointmentTime(e.target.value)}
                     required

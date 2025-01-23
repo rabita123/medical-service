@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { listTests } from '../actions/testActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -9,7 +9,7 @@ import Message from '../components/Message';
 const TestsScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const testList = useSelector((state) => state.testList);
@@ -111,7 +111,7 @@ const TestsScreen = () => {
                   <Button
                     variant="primary"
                     className="w-100 book-btn"
-                    onClick={() => history.push(`/test/${test._id}`)}
+                    onClick={() => navigate(`/test/${test._id}`)}
                     disabled={!test.is_available}
                   >
                     {test.is_available ? 'Book Now' : 'Currently Unavailable'}

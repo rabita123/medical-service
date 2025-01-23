@@ -14,7 +14,7 @@ import { protect, admin } from "../middleware/authMiddleware.js";
 // import Doctor from '../models/doctorModel.js'
 
 router.route("/").get(getDoctors).post(protect, admin, createDoctors);
-router.route("/specialist/:id").get(getAllDoctorsBySpeciality);
+router.route("/specialty/:specialty").get(getAllDoctorsBySpeciality);
 router
   .route("/:id")
   .get(getDoctorsProfileById)

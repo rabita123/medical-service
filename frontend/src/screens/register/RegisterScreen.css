@@ -1,0 +1,113 @@
+.account-page {
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 76px);
+  padding: 40px 0;
+}
+
+.main-wrapper {
+  background-color: transparent;
+}
+
+.content {
+  padding: 20px 0;
+}
+
+.account-content {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.login-left {
+  padding: 30px;
+}
+
+.login-left img {
+  max-width: 100%;
+  height: auto;
+}
+
+.login-right {
+  padding: 30px;
+}
+
+.login-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.login-header h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #272b41;
+}
+
+.login-header p {
+  color: #757575;
+  margin-bottom: 0;
+}
+
+.form-focus {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.form-focus .form-control {
+  height: 50px;
+  padding: 10px 12px 10px 45px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.form-focus .form-control:focus {
+  border-color: #2193b0;
+  box-shadow: 0 0 6px rgba(33, 147, 176, 0.2);
+}
+
+.form-focus label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 12px;
+  color: #858585;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  margin: 0;
+}
+
+.form-focus .form-control:focus + label,
+.form-focus .form-control:not(:placeholder-shown) + label {
+  top: 0;
+  font-size: 12px;
+  background: #fff;
+  padding: 0 5px;
+  color: #2193b0;
+  transform: translateY(-50%);
+}
+
+.forgot-link {
+  color: #2193b0;
+  display: inline-block;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.login-btn {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 30px;
+  min-width: 150px;
+  border-radius: 4px;
+  background: #2193b0;
+  border: none;
+}
+
+.login-btn:hover,
+.login-btn:focus {
+  background: #1a7690;
+} 

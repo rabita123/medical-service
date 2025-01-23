@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Container, Nav, Navbar, Button, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../actions/userActions';
 
 const Header = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -13,7 +13,7 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
-    history.push('/login');
+    navigate('/login');
   };
 
   return (
@@ -38,7 +38,17 @@ const Header = () => {
                 )}
               </NavDropdown>
               <Nav.Link as={Link} to="/find-consultant" className="nav-link">Find a Consultant</Nav.Link>
-              <Nav.Link as={Link} to="/chat" className="nav-link">Chat</Nav.Link>
+              <Nav.Link as={Link} to="/pharmacy" className="nav-link">Pharmacy</Nav.Link>
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title="Admin" id="admin-dropdown" className="nav-link">
+                  <NavDropdown.Item as={Link} to="/admin/dashboard">Dashboard</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/users">Users</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/tests">Tests</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/bookings">Bookings</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/pharmacy">Pharmacy</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/admin/prescription-orders">Prescriptions</NavDropdown.Item>
+                </NavDropdown>
+              )}
               {userInfo ? (
                 <>
                   <Nav.Link as={Link} to="/profile" className="nav-link">

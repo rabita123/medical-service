@@ -501,3 +501,36 @@ a {
   background-color: #0da8d9;
   border-color: #0da8d9;
 }
+
+main {
+  min-height: 80vh;
+}
+
+.table-sm {
+  font-size: 0.875rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  margin-top: 1rem;
+}

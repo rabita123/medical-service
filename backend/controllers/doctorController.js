@@ -21,23 +21,28 @@ const getDoctors = asyncHandler(async (req, res) => {
 });
 
 // @desc    Fetch all Doctors by Specialty
-// @route   GET /api/doctors/specialist/:id
+// @route   GET /api/doctors/specialty/:specialty
 // @access  Public
 const getAllDoctorsBySpeciality = asyncHandler(async (req, res) => {
   try {
-    console.log('Fetching doctors by specialty:', req.params.id);
+    const specialty = req.params.specialty;
+    console.log('Fetching doctors by specialty:', specialty);
     
-    // First get the specialist name
-    const specialist = await Specialist.findById(req.params.id);
-    if (!specialist) {
+    // Find doctors with that specialization (case-insensitive)
+    const doctors = await Doctor.find({ 
+      specialization: { 
+        $regex: new RegExp('^' + specialty + '$', 'i') 
+      } 
+    });
+    
+    console.log(`Found ${doctors.length} doctors for specialty ${specialty}`);
+    
+    if (doctors.length === 0) {
       return res.status(404).json({
-        message: 'Specialist not found'
+        message: `No doctors found for specialty: ${specialty}`
       });
     }
-
-    // Then find doctors with that specialization
-    const doctors = await Doctor.find({ specialization: specialist.name });
-    console.log(`Found ${doctors.length} doctors for specialty ${specialist.name}`);
+    
     res.json(doctors);
   } catch (error) {
     console.error('Error in getAllDoctorsBySpeciality:', error);

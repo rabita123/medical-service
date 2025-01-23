@@ -1,33 +1,38 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { listDoctorsProfile } from "../../actions/doctorProfileActions";
-import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { CommonLoading } from "react-loadingg";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
 
-const DoctorProfileScreen = ({ match, history }) => {
+const DoctorProfileScreen = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (match.params.id) {
-      dispatch(listDoctorsProfile(match.params.id));
-    }
-  }, [dispatch, match]);
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   const doctorProfileList = useSelector((state) => state.doctorProfileList);
-  const { loading, error, doctorsprofiles } = doctorProfileList;
+  const { loading, error, doctorsprofiles: doctor } = doctorProfileList;
 
-  const checkoutHandler = (id) => {
-    history.push(`/login?redirect=booking-appointment/${id}`);
+  useEffect(() => {
+    if (id) {
+      dispatch(listDoctorsProfile(id));
+    }
+  }, [dispatch, id]);
+
+  const checkoutHandler = (doctorId) => {
+    if (!userInfo) {
+      navigate(`/login?redirect=/booking-appointment/${doctorId}`);
+    } else {
+      navigate(`/booking-appointment/${doctorId}`);
+    }
   };
 
-  console.log('Current doctor profile state:', doctorProfileList);
-
   return (
-    <div>
-      <Header />
-
-      {/* <!-- Breadcrumb --> */}
+    <div className="main-wrapper">
       <div className="breadcrumb-bar">
         <div className="container-fluid">
           <div className="row align-items-center">
@@ -47,50 +52,54 @@ const DoctorProfileScreen = ({ match, history }) => {
           </div>
         </div>
       </div>
-      {/* <!-- /Breadcrumb --> */}
 
-      {/* <!-- Page Content --> */}
       <div className="content">
         <div className="container">
           {loading ? (
-            <CommonLoading />
+            <Loader />
           ) : error ? (
-            <div className="alert alert-danger">{error}</div>
-          ) : !doctorsprofiles ? (
-            <div className="alert alert-info">No doctor profile found</div>
+            <Message variant="danger">{error}</Message>
+          ) : !doctor ? (
+            <Message variant="info">No doctor profile found</Message>
           ) : (
-            /* <!-- Doctor Widget --> */
             <div className="card">
               <div className="card-body">
                 <div className="doctor-widget">
                   <div className="doc-info-left">
                     <div className="doctor-img">
                       <img
-                        src={doctorsprofiles.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
+                        src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
                         className="img-fluid"
                         alt="Doctor"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
+                        }}
                       />
                     </div>
                     <div className="doc-info-cont">
-                      <h4 className="doc-name">{doctorsprofiles.name || 'Doctor'}</h4>
-                      <p className="doc-speciality">{doctorsprofiles.degree || 'Medical Professional'}</p>
-                      {doctorsprofiles.specialization && (
+                      <h4 className="doc-name">{doctor.name || 'Doctor'}</h4>
+                      <p className="doc-speciality">{doctor.degree || 'Medical Professional'}</p>
+                      {doctor.specialization && (
                         <p className="doc-department">
                           <img
                             src="/assets/img/specialities/specialities-05.png"
                             className="img-fluid"
                             alt="Speciality"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/assets/img/specialities/default.png';
+                            }}
                           />
-                          {doctorsprofiles.specialization}
+                          {doctor.specialization}
                         </p>
                       )}
 
                       <div className="clinic-details">
-                        {doctorsprofiles.location && (
+                        {doctor.location && (
                           <p className="doc-location">
                             <i className="fas fa-map-marker-alt"></i>{" "}
-                            {doctorsprofiles.location} -{" "}
-                            <a href="javascript:void(0);">Get Directions</a>
+                            {doctor.location}
                           </p>
                         )}
                       </div>
@@ -99,28 +108,28 @@ const DoctorProfileScreen = ({ match, history }) => {
                   <div className="doc-info-right">
                     <div className="clini-infos">
                       <ul>
-                        {doctorsprofiles.location && (
+                        {doctor.location && (
                           <li>
                             <i className="fas fa-map-marker-alt"></i>{" "}
-                            {doctorsprofiles.location}
+                            {doctor.location}
                           </li>
                         )}
-                        {doctorsprofiles.fees && (
+                        {doctor.fees && (
                           <li>
                             <i className="far fa-money-bill-alt"></i>{" "}
-                            {doctorsprofiles.fees} BDT{" "}
+                            {doctor.fees} BDT{" "}
                           </li>
                         )}
-                        {doctorsprofiles.days && (
+                        {doctor.days && (
                           <li>
                             <i className="far fa-clock"></i>{" "}
-                            Available: {doctorsprofiles.days}
+                            Available: {doctor.days}
                           </li>
                         )}
-                        {doctorsprofiles.times && (
+                        {doctor.times && (
                           <li>
                             <i className="far fa-clock"></i>{" "}
-                            Time: {doctorsprofiles.times}
+                            Time: {doctor.times}
                           </li>
                         )}
                       </ul>
@@ -128,8 +137,8 @@ const DoctorProfileScreen = ({ match, history }) => {
 
                     <div className="clinic-booking">
                       <button
-                        className="btn btn-info"
-                        onClick={() => checkoutHandler(doctorsprofiles._id)}
+                        className="btn btn-primary apt-btn"
+                        onClick={() => checkoutHandler(doctor._id)}
                       >
                         Book Appointment
                       </button>
@@ -139,11 +148,8 @@ const DoctorProfileScreen = ({ match, history }) => {
               </div>
             </div>
           )}
-          {/* <!-- /Doctor Widget -->*/}
         </div>
       </div>
-      {/* <!-- /Page Content --> */}
-
       <Footer />
     </div>
   );

@@ -45,6 +45,7 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import specialistRoutes from "./routes/specialistRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import pharmacyRoutes from "./routes/pharmacyRoutes.js";
 import { addUser, removeUser, getUser, getUsersInRoom } from "./users.js";
 import productRoutes from "./routes/productRoutes.js";
 import testCategoryRoutes from "./routes/testCategoryRoutes.js";
@@ -84,6 +85,7 @@ app.use("/api/allmedicines", medicineRoutes);
 app.use("/api/specialists", specialistRoutes);
 app.use("/api/sliders", sliderRoutes);
 app.use("/api/emergencydoctors", emergencyDoctorRoutes);
+app.use("/api/pharmacy", pharmacyRoutes);
 
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)

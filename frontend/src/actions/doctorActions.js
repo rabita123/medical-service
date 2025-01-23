@@ -67,10 +67,10 @@ export const getDoctorDetails = (id) => async (dispatch) => {
   }
 };
 
-export const listDoctorsBySpeciality = (id) => async (dispatch) => {
+export const listDoctorsBySpeciality = (specialty) => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_LIST_BY_SPECIALITY_REQUEST });
-    const { data } = await axios.get(`/api/doctors/specialist/${id}`);
+    const { data } = await axios.get(`/api/doctors/specialty/${specialty.toLowerCase()}`);
     const validatedData = validateDoctorData(data, true);
     dispatch({
       type: DOCTOR_LIST_BY_SPECIALITY_SUCCESS,

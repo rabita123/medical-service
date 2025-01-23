@@ -40,6 +40,49 @@ const CustomPrevArrow = ({ className, style, onClick }) => (
   </div>
 );
 
+const specialties = [
+  {
+    id: 1,
+    name: 'Cardiologist',
+    icon: 'fa-heart',
+  },
+  {
+    id: 2,
+    name: 'Dermatologist',
+    icon: 'fa-user-md',
+  },
+  {
+    id: 3,
+    name: 'Neurologist',
+    icon: 'fa-brain',
+  },
+  {
+    id: 4,
+    name: 'Orthopedic',
+    icon: 'fa-bone',
+  },
+  {
+    id: 5,
+    name: 'Pediatrician',
+    icon: 'fa-child',
+  },
+  {
+    id: 6,
+    name: 'Psychiatrist',
+    icon: 'fa-comments',
+  },
+  {
+    id: 7,
+    name: 'Gynecologist',
+    icon: 'fa-female',
+  },
+  {
+    id: 8,
+    name: 'Dentist',
+    icon: 'fa-tooth',
+  },
+];
+
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
@@ -237,21 +280,29 @@ const HomeScreen = () => {
 
           {/* Specialties Section */}
           <section className="specialties-section py-5">
-            <h2 className="text-center mb-5">Our Specialties</h2>
-            <Row>
-              {specialists && specialists.map((specialist) => (
-                <Col key={specialist._id} md={4} lg={3} className="mb-4">
-                  <Card className="specialty-card text-center h-100 border-0 shadow-sm hover-effect">
-                    <Card.Body>
-                      <Card.Title>{specialist.name}</Card.Title>
-                      <Link to={`/doctors/specialty/${specialist._id}`} className="btn btn-outline-primary mt-3">
-                        Find Doctors
-                      </Link>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+            <Container>
+              <h2 className="text-center mb-5">Our Specialties</h2>
+              <Row>
+                {specialties.map((specialty) => (
+                  <Col key={specialty.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                    <Card className="specialty-card h-100">
+                      <Card.Body className="text-center">
+                        <div className="specialty-icon mb-3">
+                          <i className={`fas ${specialty.icon} fa-2x`}></i>
+                        </div>
+                        <h3 className="specialty-title">{specialty.name}</h3>
+                        <Link 
+                          to={`/doctors/specialty/${specialty.name.toLowerCase()}`} 
+                          className="btn btn-primary mt-3"
+                        >
+                          Find Doctors
+                        </Link>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </Container>
           </section>
         </Container>
       </main>
@@ -498,6 +549,55 @@ const HomeScreen = () => {
             .slick-arrow {
               display: none !important;
             }
+          }
+
+          .specialties-section {
+            background-color: #f8f9fa;
+          }
+
+          .specialty-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+          }
+
+          .specialty-card:hover {
+            transform: translateY(-5px);
+          }
+
+          .specialty-icon {
+            color: #2193b0;
+            height: 60px;
+            width: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            background: rgba(33, 147, 176, 0.1);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .specialty-title {
+            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+
+          .btn-primary {
+            background: #2193b0;
+            border-color: #2193b0;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+          }
+
+          .btn-primary:hover {
+            background: #1c7a94;
+            border-color: #1c7a94;
+            transform: translateY(-2px);
           }
         `}
       </style>

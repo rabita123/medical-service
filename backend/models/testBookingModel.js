@@ -16,23 +16,19 @@ const testBookingSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    status: {
-      type: String,
-      required: true,
-      default: "Pending",
-      enum: ["Pending", "Confirmed", "Completed", "Cancelled"],
-    },
-    paymentStatus: {
-      type: String,
-      required: true,
-      default: "Pending",
-      enum: ["Pending", "Completed", "Failed"],
-    },
     price: {
       type: Number,
       required: true,
     },
     patientName: {
+      type: String,
+      required: true,
+    },
+    patientEmail: {
+      type: String,
+      required: true,
+    },
+    patientPhone: {
       type: String,
       required: true,
     },
@@ -43,27 +39,13 @@ const testBookingSchema = mongoose.Schema(
     patientGender: {
       type: String,
       required: true,
-      enum: ["Male", "Female", "Other"],
+      enum: ["male", "female", "other"],
     },
-    patientPhone: {
+    status: {
       type: String,
       required: true,
-    },
-    patientEmail: {
-      type: String,
-      required: true,
-    },
-    reportUrl: {
-      type: String,
-      required: false,
-    },
-    notes: {
-      type: String,
-      required: false,
-    },
-    cancellationReason: {
-      type: String,
-      required: false,
+      enum: ["pending", "completed", "cancelled"],
+      default: "pending",
     },
   },
   {

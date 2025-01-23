@@ -1,332 +1,286 @@
-import React, { useEffect, Component, lazy } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { listTestCategories } from "../../actions/testCategoriesActions";
-import { listAllTests } from "../../actions/testActions";
+import { Link, useNavigate } from "react-router-dom";
 import { listSpecialists } from "../../actions/specialistActions";
-import {
-  listDoctors,
-  listDoctorsBySpeciality,
-} from "../../actions/doctorActions";
-import { CommonLoading } from "react-loadingg";
-import loadingImage from "../../empty.png";
-import Img from "react-cool-img";
-import Image, { Shimmer } from "react-shimmer";
+import { listDoctors, listDoctorsBySpeciality } from "../../actions/doctorActions";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
+import Header from "../../components/Header";
 
-const Header = lazy(() => import("../../components/Header"));
-
-const DoctorScreen = ({ history, match }) => {
+const DoctorScreen = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const testId = match.params.id;
-  console.log(testId);
+  const [selectedSpecialty, setSelectedSpecialty] = useState(null);
 
-  const [showResults, setShowResults] = React.useState(true);
-  const [categoryId, setCategoryId] = React.useState();
-  const [showResultcategories, setShowResultcategories] = React.useState(false);
-
-  const refreshPage = () => {
-    window.location.reload(false);
-  };
-  const testCategories = useSelector((state) => state.testCategories);
-  const { testcategories } = testCategories;
-
-  const test = useSelector((state) => state.test);
-  const { alltests } = test;
-
-  const testById = useSelector((state) => state.testById);
-  const { alltestsbycategories } = testById;
-
-  const specialist = useSelector((state) => state.specialist);
-  const { specialists } = specialist;
-
-  const doctorListBySpecialist = useSelector(
-    (state) => state.doctorListBySpecialist
-  );
-  const { loadingspecialist, doctorlistbyspecialist } = doctorListBySpecialist;
+  const specialist = useSelector((state) => state.specialistList);
+  const { loading: loadingSpecialists, error: errorSpecialists, specialists } = specialist;
 
   const doctorList = useSelector((state) => state.doctorList);
-  const { loading, error, doctors } = doctorList;
+  const { loading: loadingDoctors, error: errorDoctors, doctors } = doctorList;
 
-  const addToCartHandler = (id) => {
-    history.push(`/cart/${id}`);
-    //history.push(`/cart/${match.params.id}`);
-  };
-
-  const checkoutHandler = (id) => {
-    history.push(`/login?redirect=booking-appointment/${id}`);
-  };
-
-  const onClick = (id) => {
-    setShowResults(false);
-    setShowResultcategories(true);
-    setCategoryId(id);
-    // dispatch(listAllTestByCategories(id));
-    dispatch(listDoctorsBySpeciality(id));
-  };
+  const doctorListBySpecialist = useSelector((state) => state.doctorListBySpeciality);
+  const { 
+    loading: loadingSpecialtyDoctors, 
+    error: errorSpecialtyDoctors, 
+    doctors: specialtyDoctors 
+  } = doctorListBySpecialist;
 
   useEffect(() => {
     dispatch(listSpecialists());
     dispatch(listDoctors());
   }, [dispatch]);
 
-  const Results = () => {
-    return (
-      <>
-        {loading && <CommonLoading />}
-        <div class="col-md-12 col-lg-8 col-xl-9">
-          {doctors.map((doctor) => (
-            <div class="card">
-              <div class="card-body">
-                <div class="doctor-widget">
-                  <div class="doc-info-left">
-                    <div class="doctor-img">
-                      <a href="doctor-profile.html">
-                        <Img
-                          src={doctor.image}
-                          class="img-fluid"
-                          alt="User Image"
-                          placeholder={loadingImage}
-                        />
-                      </a>
-                    </div>
-                    <div class="doc-info-cont">
-                      <h4 class="doc-name">
-                        <Link to={`/doctor/${doctor._id}`}>{doctor.name}</Link>
-                      </h4>
-                      <p class="doc-speciality">{doctor.degree}</p>
-                      <h5 class="doc-department">
-                        <img
-                          src="assets/img/specialities/specialities-05.png"
-                          class="img-fluid"
-                          alt="Speciality"
-                        />
-                        {doctor.specialization}
-                      </h5>
-                      <p>
-                        <i class="far fa-money-bill-alt"></i>
-                        <b> Fees:</b> {doctor.fees} BDT{" "}
-                      </p>
-                      <p>
-                        <i class=""></i>
-                        <b> Location:</b> {doctor.location}
-                      </p>
-                      <div class="clinic-booking">
-                        <Link
-                          to={`/doctor/${doctor._id}`}
-                          class="view-pro-btn"
-                        >
-                          View Profile
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="doc-info-right">
-                    <div class="clini-infos">
-                      <ul></ul>
-                    </div>
-                    <div class="clinic-booking">
-                      <p>
-                        <i class=""></i>
-                        <b> Available:</b> {doctor.days}
-                      </p>
-                      <p>
-                        <i class=""></i>
-                        <b> Time:</b> {doctor.times}
-                      </p>
-
-                      <Link class="view-pro-btn" to={`/doctor/${doctor._id}`}>
-                        View Profile
-                      </Link>
-                      <br />
-
-                      <button
-                        class="btn btn-info"
-                        onClick={() => checkoutHandler(doctor._id)}
-                      >
-                        Book Appointment
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </>
-    );
+  const handleSpecialtyClick = (specialtyId) => {
+    setSelectedSpecialty(specialtyId);
+    dispatch(listDoctorsBySpeciality(specialtyId));
   };
 
-  const Resultcategories = () => {
-    return (
-      <div class="col-md-12 col-lg-8 col-xl-9">
-        {loadingspecialist && <CommonLoading />}
-        {doctorlistbyspecialist.map((doctorlistbyspecialists) => (
-          <div class="card">
-            <div class="card-body">
-              <div class="doctor-widget">
-                <div class="doc-info-left">
-                  <div class="doctor-img">
-                    <a href="doctor-profile.html">
-                      <Img
-                        src={doctorlistbyspecialists.image}
-                        class="img-fluid"
-                        alt="User Image"
-                        placeholder={loadingImage}
-                      />
-                    </a>
-                  </div>
-                  <div class="doc-info-cont">
-                    <h4 class="doc-name">
-                      <a href="doctor-profile.html">
-                        {doctorlistbyspecialists.name}
-                      </a>
-                    </h4>
-                    <p class="doc-speciality">
-                      {doctorlistbyspecialists.degree}
-                    </p>
-                    <h5 class="doc-department">
-                      <img
-                        src="assets/img/specialities/specialities-05.png"
-                        class="img-fluid"
-                        alt="Speciality"
-                      />
-                      {doctorlistbyspecialists.specialization}
-                    </h5>
-                    <p>
-                      <i class="far fa-money-bill-alt"></i>
-                      <b> Fees:</b> {doctorlistbyspecialists.fees} BDT{" "}
-                    </p>
-
-                    <p>
-                      <i class="far fa-money-bill-alt"></i>
-                      <b> Time:</b> {doctorlistbyspecialists.times}
-                    </p>
-                  </div>
-                </div>
-                <div class="doc-info-right">
-                  <div class="clini-infos">
-                    <ul>
-                      {/* <li>
-					  <i class="far fa-thumbs-up"></i> 98%
-					</li>
-					<li>
-					  <i class="far fa-comment"></i> 17 Feedback
-					</li>
-					<li>
-					  <i class="fas fa-map-marker-alt"></i> Florida, USA
-					</li> */}
-                      {/* <li>
-					  <i class="far fa-money-bill-alt"></i>
-					  <b>Fees:</b> 700 BDT{" "}
-					</li> */}
-                    </ul>
-                  </div>
-                  <div class="clinic-booking">
-                    <p>
-                      <i class="far fa-money-bill-alt"></i>
-                      <b> Location:</b> {doctorlistbyspecialists.location}
-                    </p>
-                    <p>
-                      <i class="far fa-money-bill-alt"></i>
-                      <b> Available:</b> {doctorlistbyspecialists.days}
-                    </p>
-                    <Link
-                      class="view-pro-btn"
-                      to={`/doctor/${doctorlistbyspecialists._id}`}
-                    >
-                      View Profile
-                    </Link>
-                    <br />
-
-                    <button
-                      class="btn btn-info"
-                      onClick={() =>
-                        checkoutHandler(doctorlistbyspecialists._id)
-                      }
-                    >
-                      Book Appointment
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+  const handleShowAll = () => {
+    setSelectedSpecialty(null);
   };
+
+  const checkoutHandler = (id) => {
+    navigate(`/login?redirect=booking-appointment/${id}`);
+  };
+
+  const displayedDoctors = selectedSpecialty ? specialtyDoctors : doctors;
 
   return (
-    <div class="main-wrapper">
+    <div className="main-wrapper">
       <Header />
 
-      <div class="breadcrumb-bar">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-md-12 col-12">
-              <nav aria-label="breadcrumb" class="page-breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <a href="index.html">Home</a>
+      <div className="breadcrumb-bar">
+        <div className="container-fluid">
+          <div className="row align-items-center">
+            <div className="col-md-12 col-12">
+              <nav aria-label="breadcrumb" className="page-breadcrumb">
+                <ol className="breadcrumb">
+                  <li className="breadcrumb-item">
+                    <Link to="/">Home</Link>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    Book Appointment
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    Book Appointment
+                  <li className="breadcrumb-item active" aria-current="page">
+                    Find Doctors
                   </li>
                 </ol>
               </nav>
-              <h2 class="breadcrumb-title">
-                <span class="text-small text-white ml-2">
-                  {" "}
-                  <b> Book Appointment</b>
-                </span>
-              </h2>
+              <h2 className="breadcrumb-title">Find Doctors</h2>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="content">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12 col-lg-4 col-xl-3 theiaStickySidebar">
-              <div class="card search-filter">
-                <div class="card-header"></div>
-                <div class="card-body">
-                  <div class="filter-widget">
-                    <h4>Select Specialist</h4>
-
-                    <div>
-                      {/* <span class="checkmark"></span> */}
-
-                      <label>
-                        {" "}
-                        <Link onClick={refreshPage}>All</Link>
-                      </label>
+      <div className="content">
+        <Container fluid>
+          <Row>
+            <Col md={3}>
+              <Card className="search-filter">
+                <Card.Body>
+                  <h4 className="mb-4">Filter by Specialty</h4>
+                  <div className="specialty-list">
+                    <div 
+                      className={`specialty-item ${!selectedSpecialty ? 'active' : ''}`}
+                      onClick={handleShowAll}
+                    >
+                      All Doctors
                     </div>
-                    {specialists.map((specialist) => (
-                      <div key={specialist._id}>
-                        <label>
-                          {loadingspecialist && <CommonLoading />}
-                          <Link onClick={() => onClick(specialist._id)}>
-                            {specialist.name}
-                          </Link>
-                        </label>
-                      </div>
-                    ))}
+                    {loadingSpecialists ? (
+                      <Loader />
+                    ) : errorSpecialists ? (
+                      <Message variant="danger">{errorSpecialists}</Message>
+                    ) : (
+                      specialists.map((specialty) => (
+                        <div
+                          key={specialty._id}
+                          className={`specialty-item ${selectedSpecialty === specialty._id ? 'active' : ''}`}
+                          onClick={() => handleSpecialtyClick(specialty._id)}
+                        >
+                          {specialty.name}
+                        </div>
+                      ))
+                    )}
                   </div>
-                </div>
-              </div>
-            </div>
+                </Card.Body>
+              </Card>
+            </Col>
 
-            {showResults ? <Results /> : null}
-
-            {showResultcategories ? <Resultcategories /> : null}
-          </div>
-        </div>
+            <Col md={9}>
+              {(loadingDoctors || loadingSpecialtyDoctors) ? (
+                <Loader />
+              ) : (errorDoctors || errorSpecialtyDoctors) ? (
+                <Message variant="danger">
+                  {errorDoctors || errorSpecialtyDoctors}
+                </Message>
+              ) : displayedDoctors?.length === 0 ? (
+                <Message>No doctors found</Message>
+              ) : (
+                <Row>
+                  {displayedDoctors?.map((doctor) => (
+                    <Col key={doctor._id} md={6} lg={4} className="mb-4">
+                      <Card className="doctor-card h-100">
+                        <div className="doctor-img">
+                          <img
+                            src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
+                            className="img-fluid"
+                            alt={doctor.name}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
+                            }}
+                          />
+                        </div>
+                        <Card.Body>
+                          <h4 className="doctor-name">{doctor.name}</h4>
+                          <p className="doctor-speciality">{doctor.specialization}</p>
+                          <div className="doctor-details">
+                            {doctor.degree && (
+                              <p className="mb-2">
+                                <i className="fas fa-graduation-cap"></i> {doctor.degree}
+                              </p>
+                            )}
+                            {doctor.fees && (
+                              <p className="mb-2">
+                                <i className="fas fa-money-bill-alt"></i> Fees: {doctor.fees} BDT
+                              </p>
+                            )}
+                            {doctor.location && (
+                              <p className="mb-2">
+                                <i className="fas fa-map-marker-alt"></i> {doctor.location}
+                              </p>
+                            )}
+                            {doctor.days && (
+                              <p className="mb-2">
+                                <i className="fas fa-calendar-alt"></i> Available: {doctor.days}
+                              </p>
+                            )}
+                            {doctor.times && (
+                              <p className="mb-2">
+                                <i className="fas fa-clock"></i> Times: {doctor.times}
+                              </p>
+                            )}
+                          </div>
+                          <div className="doctor-actions mt-3">
+                            <Link
+                              to={`/doctor/${doctor._id}`}
+                              className="btn btn-outline-primary btn-sm me-2"
+                            >
+                              View Profile
+                            </Link>
+                            <button
+                              onClick={() => checkoutHandler(doctor._id)}
+                              className="btn btn-primary btn-sm"
+                            >
+                              Book Appointment
+                            </button>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              )}
+            </Col>
+          </Row>
+        </Container>
       </div>
+
+      <style>
+        {`
+          .specialty-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .specialty-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+          }
+
+          .specialty-item:hover {
+            background: #e9ecef;
+          }
+
+          .specialty-item.active {
+            background: #2193b0;
+            color: white;
+          }
+
+          .doctor-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+          }
+
+          .doctor-card:hover {
+            transform: translateY(-5px);
+          }
+
+          .doctor-img {
+            height: 200px;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+          }
+
+          .doctor-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .doctor-name {
+            color: #2193b0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+
+          .doctor-speciality {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+          }
+
+          .doctor-details p {
+            color: #555;
+            font-size: 0.9rem;
+          }
+
+          .doctor-details i {
+            width: 20px;
+            color: #2193b0;
+          }
+
+          .doctor-actions {
+            display: flex;
+            gap: 0.5rem;
+          }
+
+          .btn-outline-primary {
+            color: #2193b0;
+            border-color: #2193b0;
+          }
+
+          .btn-outline-primary:hover {
+            background: #2193b0;
+            color: white;
+          }
+
+          .btn-primary {
+            background: #2193b0;
+            border-color: #2193b0;
+          }
+
+          .btn-primary:hover {
+            background: #1c7a94;
+            border-color: #1c7a94;
+          }
+        `}
+      </style>
     </div>
   );
 };

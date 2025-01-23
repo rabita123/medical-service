@@ -1,42 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { listDoctorsProfile } from "../../actions/doctorProfileActions";
-import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import TextField from "@material-ui/core/TextField";
-import { createdAppointment } from "../../actions/orderActions";
+import { createAppointment } from "../../actions/orderActions";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 
-const BookingAppointmentScreen = ({ history, match }) => {
+const BookingAppointmentScreen = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useDispatch();
+
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
-
-  useEffect(() => {
-    dispatch(listDoctorsProfile(match.params.id));
-  }, [dispatch, match]);
+  const [message, setMessage] = useState(null);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   const doctorProfileList = useSelector((state) => state.doctorProfileList);
-  const { loading, error, doctorsprofiles } = doctorProfileList;
+  const { loading, error, doctorsprofiles: doctor } = doctorProfileList;
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    if (!userInfo) {
+      navigate('/login');
+    } else if (id) {
+      dispatch(listDoctorsProfile(id));
+    }
+  }, [dispatch, id, userInfo, navigate]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!appointmentDate || !appointmentTime) {
+      setMessage("Please select both date and time");
+      return;
+    }
+
     dispatch(
-      createdAppointment({
-        doctor_id: match.params.id,
-        appointmentDate: appointmentDate,
-        appointmentTime: appointmentTime,
+      createAppointment({
+        doctor_id: id,
+        appointmentDate,
+        appointmentTime,
       })
     );
-    history.push("/booking-success");
+    navigate("/booking-success");
   };
 
+  // Get today's date in YYYY-MM-DD format for min date in date picker
+  const today = new Date().toISOString().split('T')[0];
+
   return (
-    <div>
-      <Header />
+    <div className="main-wrapper">
       <div className="breadcrumb-bar">
         <div className="container-fluid">
           <div className="row align-items-center">
@@ -63,80 +78,71 @@ const BookingAppointmentScreen = ({ history, match }) => {
             <Loader />
           ) : error ? (
             <Message variant="danger">{error}</Message>
-          ) : doctorsprofiles ? (
-            <div className="row">
-              <div className="col-12">
-                <div className="card">
-                  <div className="card-body">
-                    <div className="booking-doc-info">
-                      <a href="#" className="booking-doc-img">
-                        <img src={doctorsprofiles.image} alt="Doctor" />
-                      </a>
-                      <div className="booking-info">
-                        <h4>{doctorsprofiles.name}</h4>
-                        <p className="text-muted mb-0">
-                          {doctorsprofiles.degree}
-                        </p>
-                        <p className="text-muted mb-0">
-                          Fees: {doctorsprofiles.fees} BDT
-                        </p>
-                      </div>
-                    </div>
+          ) : !doctor ? (
+            <Message variant="info">Doctor not found</Message>
+          ) : (
+            <div className="card">
+              <div className="card-body">
+                <div className="booking-doc-info">
+                  <div className="booking-doc-img">
+                    <img
+                      src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
+                      alt="Doctor"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
+                      }}
+                    />
+                  </div>
+                  <div className="booking-info">
+                    <h4>{doctor.name}</h4>
+                    <p>{doctor.specialization}</p>
+                    {doctor.fees && <p>Consultation Fee: {doctor.fees} BDT</p>}
+                    {doctor.days && <p>Available Days: {doctor.days}</p>}
+                    {doctor.times && <p>Available Times: {doctor.times}</p>}
                   </div>
                 </div>
 
-                <div className="card booking-schedule schedule-widget">
-                  <div className="schedule-header">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className="day-slot">
-                          <ul>
-                            <div className="col-12 col-sm-4 col-md-6">
-                              Available: <h4 className="mb-1">{doctorsprofiles.days}</h4>
-                              <p className="text-muted">{doctorsprofiles.times}</p>
-                            </div>
+                {message && <Message variant="danger">{message}</Message>}
 
-                            <div className="col-md-5">
-                              <TextField
-                                id="date"
-                                label="Select Date"
-                                type="date"
-                                defaultValue={appointmentDate}
-                                onChange={(e) => setAppointmentDate(e.target.value)}
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                              />
-                            </div>
+                <form onSubmit={handleSubmit} className="mt-4">
+                  <div className="row form-row">
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Appointment Date</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          value={appointmentDate}
+                          onChange={(e) => setAppointmentDate(e.target.value)}
+                          min={today}
+                          required
+                        />
+                      </div>
+                    </div>
 
-                            <div className="col-md-5">
-                              <TextField
-                                id="time"
-                                label="Select Time"
-                                type="time"
-                                defaultValue={appointmentTime}
-                                onChange={(e) => setAppointmentTime(e.target.value)}
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                              />
-                            </div>
-                          </ul>
-                        </div>
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <label>Appointment Time</label>
+                        <input
+                          type="time"
+                          className="form-control"
+                          value={appointmentTime}
+                          onChange={(e) => setAppointmentTime(e.target.value)}
+                          required
+                        />
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="submit-section proceed-btn text-right">
-                  <button onClick={handleSubmit} className="btn btn-primary submit-btn">
-                    Book Appointment
-                  </button>
-                </div>
+                  <div className="submit-section mt-4">
+                    <button type="submit" className="btn btn-primary submit-btn">
+                      Book Appointment
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-          ) : (
-            <Message variant="info">No doctor information found.</Message>
           )}
         </div>
       </div>
