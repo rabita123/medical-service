@@ -9,7 +9,9 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build"
+        "distDir": "build",
+        "installCommand": "npm install --legacy-peer-deps",
+        "buildCommand": "NODE_OPTIONS=--openssl-legacy-provider CI=false npm run build"
       }
     }
   ],
@@ -17,6 +19,9 @@
     {
       "src": "/api/(.*)",
       "dest": "/backend/server.js"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/static/(.*)",
