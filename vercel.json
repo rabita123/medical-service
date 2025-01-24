@@ -13,7 +13,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
+        "buildCommand": "cd frontend && npm install cross-env --save-dev && npm install --legacy-peer-deps && npm run build",
         "nodeVersion": "22.x"
       }
     }
@@ -34,6 +34,7 @@
     "CI": "false",
     "DISABLE_ESLINT_PLUGIN": "true",
     "SKIP_PREFLIGHT_CHECK": "true",
-    "GENERATE_SOURCEMAP": "false"
+    "GENERATE_SOURCEMAP": "false",
+    "NODE_OPTIONS": "--openssl-legacy-provider"
   }
 } 
