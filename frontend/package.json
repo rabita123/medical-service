@@ -61,10 +61,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "CI=false NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "vercel-build": "npm install --legacy-peer-deps && CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
