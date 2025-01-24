@@ -61,10 +61,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cross-env NODE_OPTIONS='--openssl-legacy-provider --max_old_space_size=4096' CI=false GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "vercel-build": "chmod +x vercel-build.sh && ./vercel-build.sh"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
