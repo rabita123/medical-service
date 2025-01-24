@@ -1,22 +1,25 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "frontend/build",
+  "framework": "create-react-app",
+  "routes": [
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
     },
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build && cp -r build ../"
-      }
+      "src": "^/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "^/[^.]+$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
-  ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/server.js" },
-    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
     "NODE_VERSION": "22.x",
@@ -25,7 +28,6 @@
     "DISABLE_ESLINT_PLUGIN": "true",
     "SKIP_PREFLIGHT_CHECK": "true",
     "GENERATE_SOURCEMAP": "false",
-    "ESLINT_NO_DEV_ERRORS": "true"
-  },
-  "outputDirectory": "build"
+    "NODE_OPTIONS": "--openssl-legacy-provider"
+  }
 } 
