@@ -9,19 +9,30 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build",
-        "buildCommand": "npm install --legacy-peer-deps && NODE_OPTIONS=--openssl-legacy-provider CI=false npm run build"
+        "distDir": "build"
       }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/backend/server.js"
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/static/(.*)",
+      "dest": "/build/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/build/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/build/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/build/index.html"
     }
   ]
 } 
