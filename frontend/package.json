@@ -5,8 +5,8 @@
   "private": true,
   "homepage": "/",
   "engines": {
-    "node": "18.x",
-    "npm": "9.x"
+    "node": "18.20.6",
+    "npm": "10.8.2"
   },
   "dependencies": {
     "@craco/craco": "^6.1.1",
