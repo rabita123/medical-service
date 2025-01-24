@@ -3,46 +3,20 @@
   "builds": [
     {
       "src": "backend/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "nodeVersion": "22.x"
-      }
+      "use": "@vercel/node"
     },
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build",
-        "nodeVersion": "22.x"
+        "distDir": "frontend/build",
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build"
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/server.js"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "frontend/build/static/$1"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "frontend/build/favicon.ico"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "frontend/build/manifest.json"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "frontend/build/robots.txt"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/build/index.html"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/backend/server.js" },
+    { "source": "/(.*)", "destination": "/frontend/build/index.html" }
   ],
   "env": {
     "NODE_VERSION": "22.x",
