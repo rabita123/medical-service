@@ -3,11 +3,14 @@
 # Install dependencies
 npm install --legacy-peer-deps
 
-# Set environment variables
-export NODE_OPTIONS=--openssl-legacy-provider
-export DISABLE_ESLINT_PLUGIN=true
-export CI=false
-export SKIP_PREFLIGHT_CHECK=true
-
 # Build the application
-npm run build 
+NODE_OPTIONS=--openssl-legacy-provider CI=false npm run build
+
+# Ensure the build directory exists
+if [ -d "build" ]; then
+    # Copy build directory to the project root
+    cp -r build ../
+else
+    echo "Build directory not found"
+    exit 1
+fi 
