@@ -9,14 +9,14 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "frontend/build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build"
+        "distDir": "build",
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build && cp -r build ../"
       }
     }
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/backend/server.js" },
-    { "source": "/(.*)", "destination": "/frontend/build/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
     "NODE_VERSION": "22.x",
@@ -26,5 +26,6 @@
     "SKIP_PREFLIGHT_CHECK": "true",
     "GENERATE_SOURCEMAP": "false",
     "ESLINT_NO_DEV_ERRORS": "true"
-  }
+  },
+  "outputDirectory": "build"
 } 
