@@ -6,14 +6,21 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build"
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build && cp -r build/* .."
       }
     }
   ],
   "routes": [
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/static/(.*)",
       "dest": "/static/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
       "src": "/favicon.ico",
@@ -24,11 +31,8 @@
       "dest": "/manifest.json"
     },
     {
-      "src": "/asset-manifest.json",
-      "dest": "/asset-manifest.json"
-    },
-    {
       "src": "/(.*)",
+      "headers": { "cache-control": "s-maxage=0" },
       "dest": "/index.html"
     }
   ]
