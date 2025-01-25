@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "proxy": "https://$VERCEL_URL",
+  "proxy": "/api",
   "version": "0.1.0",
   "private": true,
   "homepage": "/",

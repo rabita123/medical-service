@@ -34,7 +34,7 @@ app.use(express.json());
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app'] 
+    ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app', process.env.VERCEL_URL]
     : ['http://localhost:3000'],
   credentials: true
 }));
@@ -93,7 +93,7 @@ app.get("/api/config/paypal", (req, res) =>
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  const frontendBuildPath = path.resolve(__dirname, '../../frontend/build');
+  const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
   app.use(express.static(frontendBuildPath));
 
   // Serve index.html for all routes except /api
