@@ -33,7 +33,9 @@ app.use(express.json());
 
 // CORS configuration
 app.use(cors({
-  origin: '*',
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app']
+    : 'http://localhost:3000',
   credentials: true
 }));
 
@@ -97,43 +99,45 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(frontendBuildPath));
   
   // Handle React routing, return all requests to React app
-  app.get('*', function(req, res) {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  app.get('*', function(req, res, next) {
+    if (req.path.startsWith('/api')) {
+      return next();
     }
+    res.sendFile(path.join(frontendBuildPath, 'index.html'), (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error loading page');
+      }
+    });
   });
 }
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
+// API 404 handler - for API routes only
+app.use('/api/*', (req, res) => {
+  console.log('API 404 Path:', req.path);
+  res.status(404).json({
     success: false,
-    error: 'Server Error',
-    message: err.message
+    error: 'API Not Found',
+    message: 'The requested API endpoint was not found'
   });
 });
 
-// 404 handler - should be last
+// Final 404 handler - should be last
 app.use((req, res) => {
-  console.log('404 Path:', req.path);
-  if (req.path.startsWith('/api')) {
-    res.status(404).json({
-      success: false,
-      error: 'API Not Found',
-      message: 'The requested API endpoint was not found'
+  if (process.env.NODE_ENV === 'production') {
+    const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
+    res.sendFile(path.join(frontendBuildPath, 'index.html'), (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error loading page');
+      }
     });
   } else {
-    // For non-API routes in production, serve index.html
-    if (process.env.NODE_ENV === 'production') {
-      res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-    } else {
-      res.status(404).json({
-        success: false,
-        error: 'Not Found',
-        message: 'The requested resource was not found'
-      });
-    }
+    res.status(404).json({
+      success: false,
+      error: 'Not Found',
+      message: 'The requested resource was not found'
+    });
   }
 });
 
