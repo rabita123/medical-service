@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "npm run install-client && npm run build",
+  "outputDirectory": "frontend/build",
   "builds": [
     {
       "src": "backend/server.js",
@@ -10,25 +12,38 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build"
+        "buildCommand": "npm install --legacy-peer-deps && npm run build"
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/server.js"
+      "dest": "backend/server.js"
     },
     {
       "src": "/socket.io/(.*)",
-      "dest": "/backend/server.js"
+      "dest": "backend/server.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/static/(.*)",
+      "dest": "frontend/build/static/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "frontend/build/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "frontend/build/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "frontend/build/manifest.json"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html"
+      "dest": "frontend/build/index.html"
     }
   ]
 } 
