@@ -33,11 +33,10 @@ app.use(express.json());
 
 // CORS configuration
 app.use(cors({
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://*.vercel.app"],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200,
-  credentials: true,
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app'] 
+    : ['http://localhost:3000'],
+  credentials: true
 }));
 
 // Routes
@@ -94,13 +93,15 @@ app.get("/api/config/paypal", (req, res) =>
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, '/frontend/build')));
+  const frontendBuildPath = path.resolve(__dirname, '../../frontend/build');
+  app.use(express.static(frontendBuildPath));
 
-  // Any route that is not api will be redirected to index.html
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
-  );
+  // Serve index.html for all routes except /api
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.resolve(frontendBuildPath, 'index.html'));
+    }
+  });
 } else {
   app.get('/', (req, res) => {
     res.send('API is running....');
@@ -109,12 +110,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode);
-  res.json({
-    message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-  });
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // 404 handler
@@ -135,7 +132,9 @@ const server = app.listen(PORT, () => {
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app']
+      : ['http://localhost:3000'],
     methods: ["GET", "POST"],
     credentials: true
   },
