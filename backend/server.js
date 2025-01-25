@@ -33,9 +33,7 @@ app.use(express.json());
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://medical-service-nu.vercel.app', 'https://*.vercel.app', process.env.VERCEL_URL]
-    : ['http://localhost:3000'],
+  origin: '*',
   credentials: true
 }));
 
@@ -94,33 +92,49 @@ app.get("/api/config/paypal", (req, res) =>
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
   const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
+  
+  // Serve static files
   app.use(express.static(frontendBuildPath));
-
-  // Serve index.html for all routes except /api
-  app.get('*', (req, res) => {
+  
+  // Handle React routing, return all requests to React app
+  app.get('*', function(req, res) {
     if (!req.path.startsWith('/api')) {
-      res.sendFile(path.resolve(frontendBuildPath, 'index.html'));
+      res.sendFile(path.join(frontendBuildPath, 'index.html'));
     }
-  });
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running....');
   });
 }
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({
+    success: false,
+    error: 'Server Error',
+    message: err.message
+  });
 });
 
-// 404 handler
+// 404 handler - should be last
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Not Found',
-    message: 'The requested resource was not found'
-  });
+  console.log('404 Path:', req.path);
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({
+      success: false,
+      error: 'API Not Found',
+      message: 'The requested API endpoint was not found'
+    });
+  } else {
+    // For non-API routes in production, serve index.html
+    if (process.env.NODE_ENV === 'production') {
+      res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    } else {
+      res.status(404).json({
+        success: false,
+        error: 'Not Found',
+        message: 'The requested resource was not found'
+      });
+    }
+  }
 });
 
 const PORT = process.env.PORT || 5001;
