@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node backend/server.js",
     "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "vercel-build": "npm run build",
     "install-client": "cd frontend && npm install --legacy-peer-deps",
     "install-server": "npm install",
     "server": "nodemon backend/server.js",
