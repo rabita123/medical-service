@@ -1,26 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build && cp -r build/* .."
-      }
-    }
-  ],
+  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "frontend/build",
   "routes": [
     {
-      "handle": "filesystem"
-    },
-    {
       "src": "/static/(.*)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
       "dest": "/static/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
     },
     {
       "src": "/favicon.ico",
@@ -31,8 +17,10 @@
       "dest": "/manifest.json"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "headers": { "cache-control": "s-maxage=0" },
       "dest": "/index.html"
     }
   ]
