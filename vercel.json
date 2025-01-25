@@ -50,10 +50,7 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production",
-    "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "PAYPAL_CLIENT_ID": "@paypal_client_id"
+    "NODE_ENV": "production"
   },
   "devCommand": "npm run dev"
 } 
