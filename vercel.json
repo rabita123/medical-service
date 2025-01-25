@@ -1,13 +1,19 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/build",
   "builds": [
     {
       "src": "backend/server.js",
       "use": "@vercel/node",
       "config": {
         "includeFiles": ["backend/**"]
+      }
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build",
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build"
       }
     }
   ],
@@ -27,6 +33,13 @@
     {
       "src": "/assets/(.*)",
       "dest": "backend/server.js"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "frontend/build/static/$1",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
     },
     {
       "handle": "filesystem"
