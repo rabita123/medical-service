@@ -1,18 +1,12 @@
 import axios from 'axios';
 
-// Set base URL based on environment
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://medical-service-8f3zbu0r7-rabitas-projects.vercel.app'  // Production URL
-  : 'http://localhost:5001';  // Development URL
-
 // Create axios instance with default config
 const instance = axios.create({
-  baseURL: API_URL,
+  baseURL: '/api',  // Use relative path for API calls
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-  },
-  withCredentials: true // Important for handling cookies/sessions
+  }
 });
 
 // Add request interceptor to handle auth token
