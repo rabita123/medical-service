@@ -6,10 +6,18 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import App from './App';
+import ErrorBoundary from './components/ErrorBoundary';
+import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
+
+serviceWorker.unregister();
