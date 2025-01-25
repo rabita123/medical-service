@@ -5,8 +5,8 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "frontend/build",
-        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build"
+        "distDir": "build",
+        "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build && cp -r build ../"
       }
     }
   ],
