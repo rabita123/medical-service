@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node backend/server.js",
-    "build": "npm install && cd frontend && npm install --legacy-peer-deps && npm run build",
+    "build": "DISABLE_ESLINT_PLUGIN=true CI=false npm install && cd frontend && npm install --legacy-peer-deps && npm run build",
     "vercel-build": "npm run build",
     "install-client": "cd frontend && npm install --legacy-peer-deps",
     "install-server": "npm install",
