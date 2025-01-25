@@ -54,5 +54,6 @@
     "MONGODB_URI": "@mongodb_uri",
     "JWT_SECRET": "@jwt_secret",
     "PAYPAL_CLIENT_ID": "@paypal_client_id"
-  }
+  },
+  "devCommand": "npm run dev"
 } 
