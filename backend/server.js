@@ -2,6 +2,10 @@ import dotenv from 'dotenv';
 import path from "path";
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+import express from 'express';
+import cors from 'cors';
+import { Server } from 'socket.io';
+import colors from 'colors';
 
 // Load env vars
 dotenv.config();
@@ -9,12 +13,6 @@ dotenv.config();
 // Get directory name
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-import express from 'express';
-import cors from 'cors';
-import { Server } from 'socket.io';
-import colors from 'colors';
-import connectDB from "./config/db.js";
 
 // Initialize express
 const app = express();
@@ -38,8 +36,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Connect to MongoDB
-const connectDB = async () => {
+// MongoDB Connection
+const connectMongoDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
     console.log('Connecting to MongoDB...');
@@ -53,7 +51,7 @@ const connectDB = async () => {
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000
     });
-    console.log('MongoDB Connected');
+    console.log('MongoDB Connected Successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
     process.exit(1);
@@ -61,7 +59,7 @@ const connectDB = async () => {
 };
 
 // Connect to database
-connectDB();
+await connectMongoDB();
 
 // Routes
 import doctorRoutes from "./routes/doctorRoutes.js";

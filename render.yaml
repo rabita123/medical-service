@@ -20,4 +20,5 @@ services:
       name: tmp
       mountPath: /tmp
       sizeGB: 1
-    nodeVersion: 16.x
+    runtime: node
+    nodeVersion: 18.x
