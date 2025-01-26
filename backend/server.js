@@ -34,12 +34,20 @@ app.use(express.json());
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://your-frontend-url.netlify.app']
+    ? ['https://medical-service-frontend.netlify.app', 'http://localhost:3000']
     : 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+// Add security headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+});
 
 // Routes
 import doctorRoutes from "./routes/doctorRoutes.js";
@@ -112,35 +120,87 @@ if (process.env.NODE_ENV === 'production') {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('Error details:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+
   res.status(500).json({
     success: false,
     error: 'Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 
 // 404 handler
 app.use((req, res) => {
-  if (req.url.startsWith('/api')) {
+  console.log('404 Request:', {
+    path: req.path,
+    method: req.method,
+    headers: req.headers
+  });
+
+  if (req.path.startsWith('/api')) {
     return res.status(404).json({
       success: false,
       error: 'Not Found',
-      message: 'API endpoint not found'
+      message: `API endpoint not found: ${req.path}`
     });
   }
 
   if (process.env.NODE_ENV === 'production') {
-    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
+    res.sendFile(path.join(frontendBuildPath, 'index.html'), err => {
+      if (err) {
+        console.error('Error sending index.html:', err);
+        res.status(500).json({
+          success: false,
+          error: 'Server Error',
+          message: 'Error serving frontend application'
+        });
+      }
+    });
   } else {
-    res.status(404).json({ message: 'Not Found' });
+    res.status(404).json({ 
+      success: false,
+      error: 'Not Found',
+      message: 'Resource not found'
+    });
   }
 });
 
+// Start server with error handling
 const PORT = process.env.PORT || 5001;
 
 const server = app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server Environment: ${process.env.NODE_ENV}`.yellow);
+  console.log(`Server Port: ${PORT}`.yellow);
+  console.log(`MongoDB URI exists: ${Boolean(process.env.MONGODB_URI || process.env.MONGO_URI)}`.yellow);
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.cyan.bold);
+})
+.on('error', (error) => {
+  console.error('Server failed to start:'.red.bold);
+  console.error(error.message.red);
+  process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:'.red.bold);
+  console.error(err.message.red);
+  console.error(err.stack);
+  server.close(() => process.exit(1));
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:'.red.bold);
+  console.error(err.message.red);
+  console.error(err.stack);
+  server.close(() => process.exit(1));
 });
 
 // Socket.io setup
