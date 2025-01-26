@@ -2,17 +2,22 @@ services:
   - type: web
     name: medical-service-backend
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: node backend/server.js
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 5001
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://rabita1234:tashfiq0907027@cluster0.qrp6h.mongodb.net/medical?retryWrites=true&w=majority
       - key: JWT_SECRET
         generateValue: true
-      - key: PAYPAL_CLIENT_ID
-        sync: false
+    autoDeploy: true
+    disk:
+      name: tmp
+      mountPath: /tmp
+      sizeGB: 1
     nodeVersion: 16.x

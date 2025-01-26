@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import path from "path";
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 
 // Load env vars
 dotenv.config();
@@ -18,39 +19,49 @@ import connectDB from "./config/db.js";
 // Initialize express
 const app = express();
 
-// Connect to MongoDB
-try {
-  console.log('MongoDB URI:', process.env.MONGO_URI);
-  await connectDB();
-  console.log(colors.cyan.bold('MongoDB Connected'));
-} catch (error) {
-  console.error(colors.red.bold('Error: MongoDB connection failed'), error.message);
-  process.exit(1);
-}
-
 // Middleware
 app.use(express.json());
+app.use(cors());
 
-// CORS configuration
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? ['https://medical-service-frontend.netlify.app', 'http://localhost:3000']
-    : 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
-}));
-
-// Security headers
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' 
-    ? 'https://medical-service-frontend.netlify.app' 
-    : 'http://localhost:3000');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
-  next();
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running' });
 });
+
+// API Status route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Medical Service API is running',
+    environment: process.env.NODE_ENV,
+    version: '1.0.0'
+  });
+});
+
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
+    console.log('Connecting to MongoDB...');
+    
+    if (!mongoURI) {
+      throw new Error('MongoDB URI is not defined');
+    }
+
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000
+    });
+    console.log('MongoDB Connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    process.exit(1);
+  }
+};
+
+// Connect to database
+connectDB();
 
 // Routes
 import doctorRoutes from "./routes/doctorRoutes.js";
@@ -77,16 +88,6 @@ import emergencyDoctorRoutes from "./routes/emergencyDoctorRoutes.js";
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// API Status route
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Medical Service API is running',
-    environment: process.env.NODE_ENV,
-    version: '1.0.0'
-  });
-});
 
 // API Routes
 app.use("/api/doctors", doctorRoutes);
@@ -151,19 +152,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server with error handling
 const PORT = process.env.PORT || 5001;
 
-const server = app.listen(PORT, () => {
-  console.log(`Server Environment: ${process.env.NODE_ENV}`.yellow);
-  console.log(`Server Port: ${PORT}`.yellow);
-  console.log(`MongoDB URI exists: ${Boolean(process.env.MONGODB_URI || process.env.MONGO_URI)}`.yellow);
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.cyan.bold);
-})
-.on('error', (error) => {
-  console.error('Server failed to start:'.red.bold);
-  console.error(error.message.red);
-  process.exit(1);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server Environment: ${process.env.NODE_ENV}`);
+  console.log(`Server Port: ${PORT}`);
+  console.log(`MongoDB URI exists: ${Boolean(process.env.MONGODB_URI || process.env.MONGO_URI)}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 // Handle unhandled promise rejections
