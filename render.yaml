@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: medical-service-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: MONGODB_URI
+        value: mongodb+srv://rabita1234:tashfiq0907027@cluster0.qrp6h.mongodb.net/medical?retryWrites=true&w=majority
+    nodeVersion: 16.x
