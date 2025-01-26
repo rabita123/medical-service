@@ -41,11 +41,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
-// Add security headers
+// Security headers
 app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' 
+    ? 'https://medical-service-frontend.netlify.app' 
+    : 'http://localhost:3000');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
   next();
 });
 
@@ -75,7 +78,17 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+// API Status route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Medical Service API is running',
+    environment: process.env.NODE_ENV,
+    version: '1.0.0'
+  });
+});
+
+// API Routes
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/ambulances", ambulanceRoutes);
 app.use("/api/specialist", specialistRoutes);
@@ -100,21 +113,25 @@ app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
 
-// Serve static assets in production
+// Error handling for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Not Found',
+    message: `API endpoint not found: ${req.path}`
+  });
+});
+
+// Remove frontend serving from backend
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
-  
-  // Serve static files
-  app.use(express.static(frontendBuildPath));
-  
-  // Handle React routing
-  app.get('*', (req, res, next) => {
-    if (req.url.startsWith('/api')) {
-      return next();
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.json({
+        success: false,
+        error: 'Not Found',
+        message: 'This is an API server. Please use the frontend URL to access the application.'
+      });
     }
-    
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
   });
 }
 
@@ -130,46 +147,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
     error: 'Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
-});
-
-// 404 handler
-app.use((req, res) => {
-  console.log('404 Request:', {
-    path: req.path,
-    method: req.method,
-    headers: req.headers
-  });
-
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({
-      success: false,
-      error: 'Not Found',
-      message: `API endpoint not found: ${req.path}`
-    });
-  }
-
-  if (process.env.NODE_ENV === 'production') {
-    const frontendBuildPath = path.resolve(__dirname, '../frontend/build');
-    res.sendFile(path.join(frontendBuildPath, 'index.html'), err => {
-      if (err) {
-        console.error('Error sending index.html:', err);
-        res.status(500).json({
-          success: false,
-          error: 'Server Error',
-          message: 'Error serving frontend application'
-        });
-      }
-    });
-  } else {
-    res.status(404).json({ 
-      success: false,
-      error: 'Not Found',
-      message: 'Resource not found'
-    });
-  }
 });
 
 // Start server with error handling

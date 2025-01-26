@@ -1,5 +1,6 @@
 [build]
-  command = "npm run build"
+  base = "frontend"
+  command = "npm install --legacy-peer-deps && npm run build"
   publish = "build"
 
 [[redirects]]
@@ -9,4 +10,5 @@
 
 [build.environment]
   CI = "false"
-  NODE_VERSION = "16" 
+  NODE_VERSION = "16"
+  REACT_APP_API_URL = "https://medical-service-backend-eg8t.onrender.com" 
