@@ -13,11 +13,18 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 const connectDB = async () => {
   try {
     console.log('Connecting to MongoDB...'.yellow);
-    console.log('MongoDB URI:', process.env.MONGO_URI);
+    const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
+    console.log('MongoDB URI:', mongoURI);
     
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    if (!mongoURI) {
+      throw new Error('MongoDB URI is not defined in environment variables');
+    }
+
+    const conn = await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      retryWrites: true,
+      w: 'majority'
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`.cyan.underline);

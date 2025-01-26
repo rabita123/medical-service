@@ -10,5 +10,9 @@ services:
       - key: PORT
         value: 5001
       - key: MONGODB_URI
-        value: mongodb+srv://rabita1234:tashfiq0907027@cluster0.qrp6h.mongodb.net/medical?retryWrites=true&w=majority
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PAYPAL_CLIENT_ID
+        sync: false
     nodeVersion: 16.x
