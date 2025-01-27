@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Form } from "react-bootstrap";
+import { Link, withRouter } from "react-router-dom";
+import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
+import FormContainer from "../../components/FormContainer";
 import { register } from "../../actions/userActions";
 import Footer from "../../components/Footer";
 import "./RegisterScreen.css";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ location, history }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
 
-  const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
 
   const userRegister = useSelector((state) => state.userRegister);
@@ -27,18 +25,16 @@ const RegisterScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      navigate(redirect);
+      history.push(redirect);
     }
-  }, [navigate, userInfo, redirect]);
+  }, [history, userInfo, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
-    } else if (phone.length !== 11) {
-      setMessage("Please enter a valid 11-digit phone number");
     } else {
-      dispatch(register(name, email, phone, password));
+      dispatch(register(name, email, password));
     }
   };
 
@@ -71,76 +67,65 @@ const RegisterScreen = () => {
                       {error && <Message variant="danger">{error}</Message>}
                       {loading && <Loader />}
 
-                      <Form onSubmit={submitHandler}>
-                        <div className="form-group form-focus">
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="form-control floating"
-                            required
-                          />
-                          <label className="focus-label">Full Name</label>
-                        </div>
+                      <FormContainer>
+                        <h1>Sign Up</h1>
+                        <Form onSubmit={submitHandler}>
+                          <Form.Group controlId="name">
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder="Enter name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                            ></Form.Control>
+                          </Form.Group>
 
-                        <div className="form-group form-focus">
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="form-control floating"
-                            required
-                          />
-                          <label className="focus-label">Email Address</label>
-                        </div>
+                          <Form.Group controlId="email">
+                            <Form.Label>Email Address</Form.Label>
+                            <Form.Control
+                              type="email"
+                              placeholder="Enter email"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                            ></Form.Control>
+                          </Form.Group>
 
-                        <div className="form-group form-focus">
-                          <input
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            className="form-control floating"
-                            required
-                            pattern="[0-9]{11}"
-                          />
-                          <label className="focus-label">Phone Number</label>
-                        </div>
+                          <Form.Group controlId="password">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                              type="password"
+                              placeholder="Enter password"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                            ></Form.Control>
+                          </Form.Group>
 
-                        <div className="form-group form-focus">
-                          <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="form-control floating"
-                            required
-                          />
-                          <label className="focus-label">Create Password</label>
-                        </div>
+                          <Form.Group controlId="confirmPassword">
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control
+                              type="password"
+                              placeholder="Confirm password"
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                            ></Form.Control>
+                          </Form.Group>
 
-                        <div className="form-group form-focus">
-                          <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="form-control floating"
-                            required
-                          />
-                          <label className="focus-label">Confirm Password</label>
-                        </div>
+                          <Button type="submit" variant="primary">
+                            Register
+                          </Button>
+                        </Form>
 
-                        <div className="text-right">
-                          <Link className="forgot-link" to="/login">
-                            Already have an account?
-                          </Link>
-                        </div>
-
-                        <button
-                          className="btn btn-primary btn-block btn-lg login-btn"
-                          type="submit"
-                        >
-                          Register
-                        </button>
-                      </Form>
+                        <Row className="py-3">
+                          <Col>
+                            Have an Account?{" "}
+                            <Link
+                              to={redirect ? `/login?redirect=${redirect}` : "/login"}
+                            >
+                              Login
+                            </Link>
+                          </Col>
+                        </Row>
+                      </FormContainer>
                     </div>
                   </div>
                 </div>
@@ -155,4 +140,4 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default withRouter(RegisterScreen);
