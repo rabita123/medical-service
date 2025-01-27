@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Table, Badge, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listPrescriptionOrders, updatePrescriptionOrderStatus } from '../../actions/pharmacyActions';
 import { PRESCRIPTION_ORDER_STATUS_UPDATE_RESET } from '../../constants/pharmacyConstants';
 
-const AdminPrescriptionOrdersScreen = () => {
-  const navigate = useNavigate();
+const AdminPrescriptionOrdersScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -27,7 +26,7 @@ const AdminPrescriptionOrdersScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      navigate('/login');
+      history.push('/login');
     } else {
       dispatch(listPrescriptionOrders());
     }
@@ -35,7 +34,7 @@ const AdminPrescriptionOrdersScreen = () => {
     if (successUpdate) {
       dispatch({ type: PRESCRIPTION_ORDER_STATUS_UPDATE_RESET });
     }
-  }, [dispatch, navigate, userInfo, successUpdate]);
+  }, [dispatch, history, userInfo, successUpdate]);
 
   const getStatusBadge = (status) => {
     switch (status.toLowerCase()) {
@@ -79,7 +78,7 @@ const AdminPrescriptionOrdersScreen = () => {
               <Col xs="auto">
                 <Button
                   variant="primary"
-                  onClick={() => navigate('/admin/prescription-orders/add')}
+                  onClick={() => history.push('/admin/prescription-orders/add')}
                   className="rounded-pill px-4"
                 >
                   <i className="fas fa-plus me-2"></i>
@@ -243,4 +242,4 @@ const AdminPrescriptionOrdersScreen = () => {
   );
 };
 
-export default AdminPrescriptionOrdersScreen; 
+export default withRouter(AdminPrescriptionOrdersScreen); 

@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Table, Badge } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listPrescriptionOrders } from '../../actions/pharmacyActions';
 
-const PrescriptionOrderListScreen = () => {
-  const navigate = useNavigate();
+const PrescriptionOrderListScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -19,11 +18,11 @@ const PrescriptionOrderListScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      navigate('/login');
+      history.push('/login');
     } else {
       dispatch(listPrescriptionOrders());
     }
-  }, [dispatch, navigate, userInfo]);
+  }, [dispatch, history, userInfo]);
 
   const getStatusBadge = (status) => {
     switch (status.toLowerCase()) {
@@ -141,4 +140,4 @@ const PrescriptionOrderListScreen = () => {
   );
 };
 
-export default PrescriptionOrderListScreen; 
+export default withRouter(PrescriptionOrderListScreen); 

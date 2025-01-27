@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { listSpecialists } from "../../actions/specialistActions";
 import { listDoctors, listDoctorsBySpeciality } from "../../actions/doctorActions";
 import { Container, Row, Col, Card } from "react-bootstrap";
@@ -8,8 +8,7 @@ import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 import Header from "../../components/Header";
 
-const DoctorScreen = () => {
-  const navigate = useNavigate();
+const DoctorScreen = ({ history }) => {
   const dispatch = useDispatch();
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
 
@@ -41,7 +40,7 @@ const DoctorScreen = () => {
   };
 
   const checkoutHandler = (id) => {
-    navigate(`/login?redirect=booking-appointment/${id}`);
+    history.push(`/login?redirect=booking-appointment/${id}`);
   };
 
   const displayedDoctors = selectedSpecialty ? specialtyDoctors : doctors;
@@ -285,4 +284,4 @@ const DoctorScreen = () => {
   );
 };
 
-export default DoctorScreen;
+export default withRouter(DoctorScreen);

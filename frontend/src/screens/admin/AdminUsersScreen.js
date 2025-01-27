@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { listUsers, deleteUser, updateUser } from '../../actions/userActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const AdminUsersScreen = () => {
+const AdminUsersScreen = ({ history }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -16,7 +16,6 @@ const AdminUsersScreen = () => {
   });
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -32,11 +31,11 @@ const AdminUsersScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      navigate('/login');
+      history.push('/login');
     } else {
       dispatch(listUsers());
     }
-  }, [dispatch, navigate, userInfo, successDelete, successUpdate]);
+  }, [dispatch, history, userInfo, successDelete, successUpdate]);
 
   const handleDelete = (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -256,4 +255,4 @@ const AdminUsersScreen = () => {
   );
 };
 
-export default AdminUsersScreen; 
+export default withRouter(AdminUsersScreen);

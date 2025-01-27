@@ -1,15 +1,11 @@
 [build]
   base = "frontend"
-  command = "npm install --legacy-peer-deps && CI=false npm run build"
+  command = "CI=false npm install --legacy-peer-deps && npm run build"
   publish = "build"
 
 [build.environment]
   NODE_VERSION = "16.x"
   NPM_VERSION = "8.x"
-  CI = "false"
-  NODE_OPTIONS = "--max_old_space_size=4096"
-  DISABLE_ESLINT_PLUGIN = "true"
-  SKIP_PREFLIGHT_CHECK = "true"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
 
 [[redirects]]

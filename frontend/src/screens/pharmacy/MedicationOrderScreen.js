@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import {
   Container,
   Row,
@@ -17,9 +18,8 @@ import {
   createPrescriptionOrder,
 } from '../../actions/pharmacyActions';
 
-const MedicationOrderScreen = () => {
+const MedicationOrderScreen = ({ history }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
@@ -49,9 +49,9 @@ const MedicationOrderScreen = () => {
 
   useEffect(() => {
     if (successCreate) {
-      navigate('/pharmacy/orders');
+      history.push('/pharmacy/orders');
     }
-  }, [navigate, successCreate]);
+  }, [history, successCreate]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -241,4 +241,4 @@ const MedicationOrderScreen = () => {
   );
 };
 
-export default MedicationOrderScreen; 
+export default withRouter(MedicationOrderScreen);

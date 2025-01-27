@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table, Button, Form, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { listTests, createTest, updateTest, deleteTest } from '../../actions/testActions';
 import { listTestCategories } from '../../actions/testCategoryActions';
 import { TEST_CREATE_RESET, TEST_UPDATE_RESET, TEST_DELETE_RESET } from '../../constants/testConstants';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const AdminTestsScreen = () => {
-  const navigate = useNavigate();
+const AdminTestsScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -45,7 +44,7 @@ const AdminTestsScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      navigate('/login');
+      history.push('/login');
     } else {
       dispatch(listTestCategories());
       
@@ -61,7 +60,7 @@ const AdminTestsScreen = () => {
         dispatch(listTests());
       }
     }
-  }, [dispatch, navigate, userInfo, successCreate, successUpdate, successDelete]);
+  }, [dispatch, history, userInfo, successCreate, successUpdate, successDelete]);
 
   useEffect(() => {
     if (showAddModal || showEditModal) {
@@ -393,4 +392,4 @@ const AdminTestsScreen = () => {
   );
 };
 
-export default AdminTestsScreen; 
+export default withRouter(AdminTestsScreen); 

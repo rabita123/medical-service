@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { listTests } from '../actions/testActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
-const TestsScreen = () => {
+const TestsScreen = ({ history }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const testList = useSelector((state) => state.testList);
@@ -18,6 +17,10 @@ const TestsScreen = () => {
   useEffect(() => {
     dispatch(listTests());
   }, [dispatch]);
+
+  const handleTestClick = (id) => {
+    history.push(`/test/${id}`);
+  };
 
   const filteredTests = tests?.filter(test =>
     test.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -78,7 +81,7 @@ const TestsScreen = () => {
         <Row>
           {filteredTests.map((test) => (
             <Col key={test._id} sm={12} md={6} lg={4} className="mb-4">
-              <Card className="h-100 test-card">
+              <Card className="h-100 test-card" onClick={() => handleTestClick(test._id)}>
                 {test.image && (
                   <Card.Img
                     variant="top"
@@ -111,7 +114,6 @@ const TestsScreen = () => {
                   <Button
                     variant="primary"
                     className="w-100 book-btn"
-                    onClick={() => navigate(`/test/${test._id}`)}
                     disabled={!test.is_available}
                   >
                     {test.is_available ? 'Book Now' : 'Currently Unavailable'}
@@ -213,4 +215,4 @@ const TestsScreen = () => {
   );
 };
 
-export default TestsScreen; 
+export default withRouter(TestsScreen); 
