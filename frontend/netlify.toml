@@ -1,15 +1,16 @@
 [build]
   base = "frontend"
-  command = "rm -rf node_modules && npm cache clean --force && npm install --legacy-peer-deps && CI=false npm run build"
+  command = "npm install --legacy-peer-deps && CI=false npm run build"
   publish = "build"
 
 [build.environment]
-  NODE_VERSION = "18.x"
-  NPM_VERSION = "9.x"
+  NODE_VERSION = "16.x"
+  NPM_VERSION = "8.x"
   CI = "false"
-  NODE_OPTIONS = "--openssl-legacy-provider --max_old_space_size=4096"
+  NODE_OPTIONS = "--max_old_space_size=4096"
   DISABLE_ESLINT_PLUGIN = "true"
   SKIP_PREFLIGHT_CHECK = "true"
+  NPM_CONFIG_LEGACY_PEER_DEPS = "true"
 
 [[redirects]]
   from = "/*"
