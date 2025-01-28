@@ -1,14 +1,17 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+<<<<<<< HEAD
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+=======
+import { withRouter, useParams } from "react-router-dom";
+>>>>>>> origin/main
 import { listDoctorsProfile } from "../../actions/doctorProfileActions";
 import Footer from "../../components/Footer";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 
-const DoctorProfileScreen = () => {
-  const navigate = useNavigate();
+const DoctorProfileScreen = ({ history }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -26,9 +29,9 @@ const DoctorProfileScreen = () => {
 
   const checkoutHandler = (doctorId) => {
     if (!userInfo) {
-      navigate(`/login?redirect=/booking-appointment/${doctorId}`);
+      history.push(`/login?redirect=/booking-appointment/${doctorId}`);
     } else {
-      navigate(`/booking-appointment/${doctorId}`);
+      history.push(`/booking-appointment/${doctorId}`);
     }
   };
 
@@ -365,4 +368,4 @@ const DoctorProfileScreen = () => {
   );
 };
 
-export default DoctorProfileScreen;
+export default withRouter(DoctorProfileScreen);

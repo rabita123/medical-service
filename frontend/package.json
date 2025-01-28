@@ -5,8 +5,8 @@
   "private": true,
   "homepage": "/",
   "engines": {
-    "node": "14.x",
-    "npm": "6.x"
+    "node": "16.x",
+    "npm": "8.x"
   },
   "dependencies": {
     "@craco/craco": "^6.1.1",
@@ -39,7 +39,7 @@
     "react-pdf": "^5.2.0",
     "react-redux": "^7.2.9",
     "react-router-bootstrap": "^0.25.0",
-    "react-router-dom": "^6.28.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "react-scroll-to-bottom": "^4.1.0",
     "react-search-field": "^1.2.0",
@@ -61,13 +61,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
-      "react-app"
+      "react-app",
+      "react-app/jest"
     ]
   },
   "browserslist": {

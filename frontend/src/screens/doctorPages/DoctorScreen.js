@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -7,6 +8,19 @@ import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
 const DoctorScreen = () => {
+=======
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, withRouter } from "react-router-dom";
+import { listSpecialists } from "../../actions/specialistActions";
+import { listDoctors, listDoctorsBySpeciality } from "../../actions/doctorActions";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
+import Header from "../../components/Header";
+
+const DoctorScreen = ({ history }) => {
+>>>>>>> origin/main
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
@@ -36,8 +50,16 @@ const DoctorScreen = () => {
     return matchesSearch && matchesSpecialty;
   }) || [];
 
+<<<<<<< HEAD
   // Get unique specialties
   const specialties = [...new Set(doctors?.map(doctor => doctor.specialization).filter(Boolean) || [])];
+=======
+  const checkoutHandler = (id) => {
+    history.push(`/login?redirect=booking-appointment/${id}`);
+  };
+
+  const displayedDoctors = selectedSpecialty ? specialtyDoctors : doctors;
+>>>>>>> origin/main
 
   return (
     <div className="main-wrapper">
@@ -380,4 +402,4 @@ const DoctorScreen = () => {
   );
 };
 
-export default DoctorScreen;
+export default withRouter(DoctorScreen);

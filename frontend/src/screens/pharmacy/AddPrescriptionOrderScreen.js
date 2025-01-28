@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../config/axios';
 import { Container, Form, Button, Card, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listMedications, createPrescriptionOrder } from '../../actions/pharmacyActions';
 import { PRESCRIPTION_ORDER_CREATE_RESET } from '../../constants/pharmacyConstants';
 
-const AddPrescriptionOrderScreen = () => {
+const AddPrescriptionOrderScreen = ({ history }) => {
   console.log('Component mounting');
   
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [medication, setMedication] = useState('');
@@ -39,7 +38,7 @@ const AddPrescriptionOrderScreen = () => {
     console.log('useEffect running with userInfo:', userInfo);
     if (!userInfo || !userInfo.isAdmin) {
       console.log('Redirecting to login');
-      navigate('/login');
+      history.push('/login');
       return;
     }
 
@@ -49,9 +48,9 @@ const AddPrescriptionOrderScreen = () => {
     if (success) {
       console.log('Order creation successful, redirecting');
       dispatch({ type: PRESCRIPTION_ORDER_CREATE_RESET });
-      navigate('/admin/prescription-orders');
+      history.push('/admin/prescription-orders');
     }
-  }, [dispatch, navigate, userInfo, success]);
+  }, [dispatch, history, userInfo, success]);
 
   const uploadFileHandler = async (e) => {
     console.log('Starting file upload');
@@ -189,4 +188,4 @@ const AddPrescriptionOrderScreen = () => {
   );
 };
 
-export default AddPrescriptionOrderScreen; 
+export default withRouter(AddPrescriptionOrderScreen); 

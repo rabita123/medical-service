@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { Container, Table, Button, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { listAllTestBookings, cancelTestBooking, completeTestBooking } from '../../actions/testActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const AdminBookingsScreen = () => {
+const AdminBookingsScreen = ({ history }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -24,11 +23,11 @@ const AdminBookingsScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      navigate('/login');
+      history.push('/login');
     } else {
       dispatch(listAllTestBookings());
     }
-  }, [dispatch, navigate, userInfo, successCancel, successComplete]);
+  }, [dispatch, history, userInfo, successCancel, successComplete]);
 
   const handleCancel = (bookingId) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
@@ -236,4 +235,4 @@ const AdminBookingsScreen = () => {
   );
 };
 
-export default AdminBookingsScreen; 
+export default withRouter(AdminBookingsScreen); 
