@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from './components/Header';
 import { CommonLoading } from 'react-loadingg';
+import DoctorListScreen from './screens/DoctorListScreen';
 
 // Lazy load components
 const HomeScreen = React.lazy(() => import('./screens/HomeScreen'));
@@ -63,6 +64,7 @@ function App() {
               <Route path="/prescription-orders" element={<PrescriptionOrderListScreen />} />
               <Route path="/admin/prescription-orders" element={<AdminRoute><AdminPrescriptionOrdersScreen /></AdminRoute>} />
               <Route path="/admin/prescription-orders/add" element={<AdminRoute><AddPrescriptionOrderScreen /></AdminRoute>} />
+              <Route path="/doctors" element={<DoctorListScreen />} />
             </Routes>
           </Suspense>
         </Container>

@@ -19,9 +19,7 @@ import { sliderListReducer } from './reducers/sliderReducers';
 import {
   doctorListReducer,
   doctorDetailsReducer,
-  doctorCreateReducer,
   doctorUpdateReducer,
-  doctorDeleteReducer,
   doctorListBySpecialityReducer,
 } from './reducers/doctorReducers';
 
@@ -76,9 +74,7 @@ const reducer = combineReducers({
   doctorProfileList: doctorProfileListReducer,
   doctorList: doctorListReducer,
   doctorDetails: doctorDetailsReducer,
-  doctorCreate: doctorCreateReducer,
   doctorUpdate: doctorUpdateReducer,
-  doctorDelete: doctorDeleteReducer,
   doctorListBySpeciality: doctorListBySpecialityReducer,
   testList: testListReducer,
   testDetails: testDetailsReducer,

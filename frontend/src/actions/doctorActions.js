@@ -82,6 +82,10 @@ export const listDoctors = () => async (dispatch) => {
     const { data } = await api.get("/api/doctors");
     console.log('Doctors data received:', data);
     
+    if (!data) {
+      throw new Error('No data received from server');
+    }
+
     dispatch({
       type: DOCTOR_LIST_SUCCESS,
       payload: Array.isArray(data) ? data : data.doctors || [],

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Nav, Navbar, Button, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../actions/userActions';
 
@@ -31,9 +31,9 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
               <Nav.Link as={Link} to="/" className="nav-link">Home</Nav.Link>
-              <NavDropdown title="Find Doctors" id="find-doctors-dropdown" className="nav-link">
+              <NavDropdown title="Find Doctors" id="basic-nav-dropdown" className="nav-link">
                 <NavDropdown.Item as={Link} to="/doctors">All Doctors</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/doctors/specialists">Specialists</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/doctors/specialties">Doctors by Specialty</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/doctors/emergency">Emergency Doctors</NavDropdown.Item>
                 {userInfo && (
                   <NavDropdown.Item as={Link} to="/my-appointments">My Appointments</NavDropdown.Item>
@@ -48,35 +48,23 @@ const Header = () => {
               <Nav.Link as={Link} to="/find-consultant" className="nav-link">Find a Consultant</Nav.Link>
               <Nav.Link as={Link} to="/pharmacy" className="nav-link">Pharmacy</Nav.Link>
               {userInfo && userInfo.isAdmin && (
-                <NavDropdown title="Admin" id="admin-dropdown" className="nav-link">
+                <NavDropdown title="Admin" id="adminmenu" className="nav-link">
                   <NavDropdown.Item as={Link} to="/admin/dashboard">Dashboard</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/admin/users">Users</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/admin/tests">Tests</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/admin/bookings">Bookings</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/admin/pharmacy">Pharmacy</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/admin/prescription-orders">Prescriptions</NavDropdown.Item>
                 </NavDropdown>
               )}
               {userInfo ? (
-                <>
-                  <Nav.Link as={Link} to="/profile" className="nav-link">
-                    <i className="fas fa-user-circle me-1"></i>
-                    {userInfo.name}
-                  </Nav.Link>
-                  <Button 
-                    onClick={logoutHandler} 
-                    variant="outline-primary"
-                    className="logout-btn ms-2"
-                  >
-                    Logout
-                  </Button>
-                </>
+                <NavDropdown title={userInfo.name} id="username" className="nav-link">
+                  <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
+                </NavDropdown>
               ) : (
-                <Link to="/login" className="ms-2">
-                  <Button variant="primary" className="auth-btn">
-                    LOGIN / SIGNUP
-                  </Button>
-                </Link>
+                <Nav.Link as={Link} to="/login" className="nav-link">
+                  <button className="btn btn-primary login-btn">LOGIN / SIGNUP</button>
+                </Nav.Link>
               )}
             </Nav>
           </Navbar.Collapse>
