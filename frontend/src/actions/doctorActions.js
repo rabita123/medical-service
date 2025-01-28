@@ -14,6 +14,47 @@ import {
   DOCTOR_LIST_BY_SPECIALITY_FAIL,
 } from "../constants/doctorConstants";
 
+// Create axios instance with base URL
+const api = axios.create({
+  baseURL: 'http://localhost:5001',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  withCredentials: false
+});
+
+// Add request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    console.log('Making request to:', config.url);
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => {
+    console.log('Received response:', response.data);
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error);
+    if (error.response) {
+      console.error('Error Response Data:', error.response.data);
+      console.error('Error Response Status:', error.response.status);
+    } else if (error.request) {
+      console.error('No response received');
+    } else {
+      console.error('Error setting up request:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Helper function to handle errors
 const handleError = (error) => {
   return error.response?.data?.message || error.message || 'An unexpected error occurred';
@@ -36,16 +77,20 @@ const validateDoctorData = (data, expectArray = false) => {
 export const listDoctors = () => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_LIST_REQUEST });
-    const { data } = await axios.get("/api/doctors");
-    const validatedData = validateDoctorData(data, true);
+    
+    console.log('Fetching doctors list...');
+    const { data } = await api.get("/api/doctors");
+    console.log('Doctors data received:', data);
+    
     dispatch({
       type: DOCTOR_LIST_SUCCESS,
-      payload: validatedData,
+      payload: Array.isArray(data) ? data : data.doctors || [],
     });
   } catch (error) {
+    console.error('Error fetching doctors:', error);
     dispatch({
       type: DOCTOR_LIST_FAIL,
-      payload: handleError(error),
+      payload: error.response?.data?.message || error.message || 'Failed to fetch doctors',
     });
   }
 };
@@ -53,7 +98,7 @@ export const listDoctors = () => async (dispatch) => {
 export const getDoctorDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_DETAILS_REQUEST });
-    const { data } = await axios.get(`/api/doctors/${id}`);
+    const { data } = await api.get(`/api/doctors/${id}`);
     const validatedData = validateDoctorData(data);
     dispatch({
       type: DOCTOR_DETAILS_SUCCESS,
@@ -70,7 +115,7 @@ export const getDoctorDetails = (id) => async (dispatch) => {
 export const listDoctorsBySpeciality = (specialty) => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_LIST_BY_SPECIALITY_REQUEST });
-    const { data } = await axios.get(`/api/doctors/specialty/${specialty.toLowerCase()}`);
+    const { data } = await api.get(`/api/doctors/specialty/${specialty}`);
     const validatedData = validateDoctorData(data, true);
     dispatch({
       type: DOCTOR_LIST_BY_SPECIALITY_SUCCESS,
@@ -98,12 +143,11 @@ export const updateDoctor = (doctor) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
-    const { data } = await axios.put(`/api/doctors/${doctor._id}`, doctor, config);
+    const { data } = await api.put(`/api/doctors/${doctor._id}`, doctor, config);
     const validatedData = validateDoctorData(data);
     dispatch({ type: DOCTOR_UPDATE_SUCCESS, payload: validatedData });
   } catch (error) {

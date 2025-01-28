@@ -1,229 +1,269 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { listSpecialists } from "../../actions/specialistActions";
-import { listDoctors, listDoctorsBySpeciality } from "../../actions/doctorActions";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import Header from "../../components/Header";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Container, Row, Col, Card, Form } from 'react-bootstrap';
+import { listDoctors } from '../../actions/doctorActions';
+import Loader from '../../components/Loader';
+import Message from '../../components/Message';
 
 const DoctorScreen = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [selectedSpecialty, setSelectedSpecialty] = useState(null);
-
-  const specialist = useSelector((state) => state.specialistList);
-  const { loading: loadingSpecialists, error: errorSpecialists, specialists } = specialist;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSpecialty, setSelectedSpecialty] = useState('');
 
   const doctorList = useSelector((state) => state.doctorList);
-  const { loading: loadingDoctors, error: errorDoctors, doctors } = doctorList;
-
-  const doctorListBySpecialist = useSelector((state) => state.doctorListBySpeciality);
-  const { 
-    loading: loadingSpecialtyDoctors, 
-    error: errorSpecialtyDoctors, 
-    doctors: specialtyDoctors 
-  } = doctorListBySpecialist;
+  const { loading, error, doctors } = doctorList;
 
   useEffect(() => {
-    dispatch(listSpecialists());
+    console.log('Dispatching listDoctors action');
     dispatch(listDoctors());
   }, [dispatch]);
 
-  const handleSpecialtyClick = (specialtyId) => {
-    setSelectedSpecialty(specialtyId);
-    dispatch(listDoctorsBySpeciality(specialtyId));
-  };
+  // Debug logging
+  useEffect(() => {
+    console.log('Doctor List State:', { loading, error, doctors });
+  }, [loading, error, doctors]);
 
-  const handleShowAll = () => {
-    setSelectedSpecialty(null);
-  };
+  // Filter doctors based on search and specialty
+  const filteredDoctors = doctors?.filter(doctor => {
+    const matchesSearch = searchTerm === '' || 
+      doctor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doctor.specialization?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesSpecialty = selectedSpecialty === '' || 
+      doctor.specialization === selectedSpecialty;
+    
+    return matchesSearch && matchesSpecialty;
+  }) || [];
 
-  const checkoutHandler = (id) => {
-    navigate(`/login?redirect=booking-appointment/${id}`);
-  };
-
-  const displayedDoctors = selectedSpecialty ? specialtyDoctors : doctors;
+  // Get unique specialties
+  const specialties = [...new Set(doctors?.map(doctor => doctor.specialization).filter(Boolean) || [])];
 
   return (
     <div className="main-wrapper">
-      <Header />
-
+      {/* Breadcrumb */}
       <div className="breadcrumb-bar">
-        <div className="container-fluid">
-          <div className="row align-items-center">
-            <div className="col-md-12 col-12">
-              <nav aria-label="breadcrumb" className="page-breadcrumb">
+        <Container>
+          <Row className="align-items-center">
+            <Col md={12}>
+              <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item">
                     <Link to="/">Home</Link>
                   </li>
-                  <li className="breadcrumb-item active" aria-current="page">
+                  <li className="breadcrumb-item active">
                     Find Doctors
                   </li>
                 </ol>
               </nav>
               <h2 className="breadcrumb-title">Find Doctors</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="content">
-        <Container fluid>
-          <Row>
-            <Col md={3}>
-              <Card className="search-filter">
-                <Card.Body>
-                  <h4 className="mb-4">Filter by Specialty</h4>
-                  <div className="specialty-list">
-                    <div 
-                      className={`specialty-item ${!selectedSpecialty ? 'active' : ''}`}
-                      onClick={handleShowAll}
-                    >
-                      All Doctors
-                    </div>
-                    {loadingSpecialists ? (
-                      <Loader />
-                    ) : errorSpecialists ? (
-                      <Message variant="danger">{errorSpecialists}</Message>
-                    ) : (
-                      specialists.map((specialty) => (
-                        <div
-                          key={specialty._id}
-                          className={`specialty-item ${selectedSpecialty === specialty._id ? 'active' : ''}`}
-                          onClick={() => handleSpecialtyClick(specialty._id)}
-                        >
-                          {specialty.name}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={9}>
-              {(loadingDoctors || loadingSpecialtyDoctors) ? (
-                <Loader />
-              ) : (errorDoctors || errorSpecialtyDoctors) ? (
-                <Message variant="danger">
-                  {errorDoctors || errorSpecialtyDoctors}
-                </Message>
-              ) : displayedDoctors?.length === 0 ? (
-                <Message>No doctors found</Message>
-              ) : (
-                <Row>
-                  {displayedDoctors?.map((doctor) => (
-                    <Col key={doctor._id} md={6} lg={4} className="mb-4">
-                      <Card className="doctor-card h-100">
-                        <div className="doctor-img">
-                          <img
-                            src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
-                            className="img-fluid"
-                            alt={doctor.name}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
-                            }}
-                          />
-                        </div>
-                        <Card.Body>
-                          <h4 className="doctor-name">{doctor.name}</h4>
-                          <p className="doctor-speciality">{doctor.specialization}</p>
-                          <div className="doctor-details">
-                            {doctor.degree && (
-                              <p className="mb-2">
-                                <i className="fas fa-graduation-cap"></i> {doctor.degree}
-                              </p>
-                            )}
-                            {doctor.fees && (
-                              <p className="mb-2">
-                                <i className="fas fa-money-bill-alt"></i> Fees: {doctor.fees} BDT
-                              </p>
-                            )}
-                            {doctor.location && (
-                              <p className="mb-2">
-                                <i className="fas fa-map-marker-alt"></i> {doctor.location}
-                              </p>
-                            )}
-                            {doctor.days && (
-                              <p className="mb-2">
-                                <i className="fas fa-calendar-alt"></i> Available: {doctor.days}
-                              </p>
-                            )}
-                            {doctor.times && (
-                              <p className="mb-2">
-                                <i className="fas fa-clock"></i> Times: {doctor.times}
-                              </p>
-                            )}
-                          </div>
-                          <div className="doctor-actions mt-3">
-                            <Link
-                              to={`/doctor/${doctor._id}`}
-                              className="btn btn-outline-primary btn-sm me-2"
-                            >
-                              View Profile
-                            </Link>
-                            <button
-                              onClick={() => checkoutHandler(doctor._id)}
-                              className="btn btn-primary btn-sm"
-                            >
-                              Book Appointment
-                            </button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              )}
             </Col>
           </Row>
         </Container>
       </div>
 
+      {/* Page Content */}
+      <div className="content">
+        <Container>
+          {/* Search and Filter Section */}
+          <Row className="mb-4">
+            <Col md={6} lg={4}>
+              <div className="search-box">
+                <Form.Control
+                  type="text"
+                  placeholder="Search doctors by name or specialty..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <i className="fas fa-search search-icon"></i>
+              </div>
+            </Col>
+            <Col md={6} lg={4}>
+              <Form.Select
+                value={selectedSpecialty}
+                onChange={(e) => setSelectedSpecialty(e.target.value)}
+                className="specialty-select"
+              >
+                <option value="">All Specialties</option>
+                {specialties.map((specialty, index) => (
+                  <option key={index} value={specialty}>{specialty}</option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Row>
+
+          {/* Doctors List */}
+          {loading ? (
+            <Loader />
+          ) : error ? (
+            <Message variant="danger">{error}</Message>
+          ) : !doctors || doctors.length === 0 ? (
+            <Message>No doctors found</Message>
+          ) : (
+            <>
+              <Row className="doctors-count mb-4">
+                <Col>
+                  <h3>
+                    {filteredDoctors.length} {filteredDoctors.length === 1 ? 'Doctor' : 'Doctors'} Found
+                  </h3>
+                </Col>
+              </Row>
+              <Row>
+                {filteredDoctors.map((doctor) => (
+                  <Col key={doctor._id} md={6} lg={4} className="mb-4">
+                    <Card className="doctor-card">
+                      <Card.Body>
+                        <div className="doctor-img-wrapper">
+                          <div className="doctor-img">
+                            <img
+                              src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
+                              alt={doctor.name}
+                              className="img-fluid"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
+                              }}
+                            />
+                          </div>
+                          {doctor.isAvailable && (
+                            <span className="available-badge">
+                              <i className="fas fa-check-circle"></i> Available
+                            </span>
+                          )}
+                        </div>
+                        <div className="doctor-content">
+                          <h4 className="doctor-name">{doctor.name}</h4>
+                          <p className="doctor-speciality">{doctor.specialization}</p>
+                          <div className="doctor-info">
+                            {doctor.degree && (
+                              <p><i className="fas fa-graduation-cap"></i> {doctor.degree}</p>
+                            )}
+                            {doctor.experience && (
+                              <p><i className="fas fa-clock"></i> {doctor.experience} Years Experience</p>
+                            )}
+                            {doctor.location && (
+                              <p><i className="fas fa-map-marker-alt"></i> {doctor.location}</p>
+                            )}
+                            {doctor.fees && (
+                              <p><i className="fas fa-money-bill"></i> {doctor.fees} BDT</p>
+                            )}
+                          </div>
+                          <div className="doctor-action">
+                            <Link to={`/doctor/${doctor._id}`} className="btn btn-primary">
+                              View Profile
+                            </Link>
+                            <Link to={`/booking-appointment/${doctor._id}`} className="btn btn-outline-primary">
+                              Book Appointment
+                            </Link>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
+        </Container>
+      </div>
+
       <style>
         {`
-          .specialty-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+          .breadcrumb-bar {
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            padding: 30px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
           }
 
-          .specialty-item {
-            padding: 0.75rem 1rem;
+          .breadcrumb {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+          }
+
+          .breadcrumb-item a {
+            color: #fff;
+            opacity: 0.8;
+            text-decoration: none;
+            transition: opacity 0.3s;
+          }
+
+          .breadcrumb-item a:hover {
+            opacity: 1;
+          }
+
+          .breadcrumb-item.active {
+            color: #fff;
+          }
+
+          .breadcrumb-title {
+            color: #fff;
+            margin: 10px 0 0;
+            font-size: 2rem;
+            font-weight: 600;
+          }
+
+          .search-box {
+            position: relative;
+          }
+
+          .search-input {
+            padding: 12px 20px;
+            padding-right: 40px;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           }
 
-          .specialty-item:hover {
-            background: #e9ecef;
+          .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2193b0;
           }
 
-          .specialty-item.active {
-            background: #2193b0;
-            color: white;
+          .specialty-select {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          }
+
+          .doctors-count h3 {
+            color: #272b41;
+            font-size: 1.5rem;
+            font-weight: 600;
           }
 
           .doctor-card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
           }
 
           .doctor-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+          }
+
+          .doctor-img-wrapper {
+            position: relative;
+            margin-bottom: 20px;
           }
 
           .doctor-img {
-            height: 200px;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+            border-radius: 50%;
             overflow: hidden;
-            border-radius: 15px 15px 0 0;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
           }
 
           .doctor-img img {
@@ -232,32 +272,81 @@ const DoctorScreen = () => {
             object-fit: cover;
           }
 
+          .available-badge {
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            background: #28a745;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+          }
+
+          .doctor-content {
+            text-align: center;
+            padding: 0 15px;
+          }
+
           .doctor-name {
-            color: #2193b0;
-            font-size: 1.25rem;
+            color: #272b41;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin: 15px 0 10px;
           }
 
           .doctor-speciality {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            color: #2193b0;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 20px;
           }
 
-          .doctor-details p {
+          .doctor-info {
+            text-align: left;
+            margin-bottom: 20px;
+          }
+
+          .doctor-info p {
             color: #555;
             font-size: 0.9rem;
-          }
-
-          .doctor-details i {
-            width: 20px;
-            color: #2193b0;
-          }
-
-          .doctor-actions {
+            margin-bottom: 10px;
             display: flex;
-            gap: 0.5rem;
+            align-items: center;
+          }
+
+          .doctor-info i {
+            color: #2193b0;
+            width: 20px;
+            margin-right: 10px;
+          }
+
+          .doctor-action {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+          }
+
+          .doctor-action .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+          }
+
+          .btn-primary {
+            background: #2193b0;
+            border-color: #2193b0;
+          }
+
+          .btn-primary:hover {
+            background: #1a7a8e;
+            border-color: #1a7a8e;
           }
 
           .btn-outline-primary {
@@ -267,17 +356,23 @@ const DoctorScreen = () => {
 
           .btn-outline-primary:hover {
             background: #2193b0;
-            color: white;
+            color: #fff;
           }
 
-          .btn-primary {
-            background: #2193b0;
-            border-color: #2193b0;
+          .content {
+            padding: 40px 0;
+            min-height: calc(100vh - 200px);
+            background: #f8f9fa;
           }
 
-          .btn-primary:hover {
-            background: #1c7a94;
-            border-color: #1c7a94;
+          @media (max-width: 768px) {
+            .doctor-action {
+              flex-direction: column;
+            }
+            
+            .search-box, .specialty-select {
+              margin-bottom: 15px;
+            }
           }
         `}
       </style>

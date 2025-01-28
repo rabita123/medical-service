@@ -31,6 +31,14 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
               <Nav.Link as={Link} to="/" className="nav-link">Home</Nav.Link>
+              <NavDropdown title="Find Doctors" id="find-doctors-dropdown" className="nav-link">
+                <NavDropdown.Item as={Link} to="/doctors">All Doctors</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/doctors/specialists">Specialists</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/doctors/emergency">Emergency Doctors</NavDropdown.Item>
+                {userInfo && (
+                  <NavDropdown.Item as={Link} to="/my-appointments">My Appointments</NavDropdown.Item>
+                )}
+              </NavDropdown>
               <NavDropdown title="Health Services" id="health-services-dropdown" className="nav-link">
                 <NavDropdown.Item as={Link} to="/tests">Book Health Test</NavDropdown.Item>
                 {userInfo && (

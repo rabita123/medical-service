@@ -17,9 +17,18 @@ const __dirname = path.dirname(__filename);
 // Initialize express
 const app = express();
 
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Health check route
 app.get('/health', (req, res) => {
