@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Table, Badge } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listPrescriptionOrders } from '../../actions/pharmacyActions';
 
-const PrescriptionOrderListScreen = ({ history }) => {
+const PrescriptionOrderListScreen = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -140,4 +141,4 @@ const PrescriptionOrderListScreen = ({ history }) => {
   );
 };
 
-export default withRouter(PrescriptionOrderListScreen); 
+export default PrescriptionOrderListScreen; 

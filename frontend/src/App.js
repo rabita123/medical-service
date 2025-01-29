@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import { CommonLoading } from 'react-loadingg';
 import DoctorListScreen from './screens/DoctorListScreen';
 
@@ -34,40 +35,10 @@ const AddPrescriptionOrderScreen = React.lazy(() => import('./screens/pharmacy/A
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <main className="py-3">
-        <Container>
+      <div className="app-wrapper">
+        <Header />
+        <main className="main-content">
           <Suspense fallback={<CommonLoading />}>
-<<<<<<< HEAD
-            <Routes>
-              <Route path="/" element={<HomeScreen />} />
-              <Route path="/register-user" element={<RegisterScreen />} />
-              <Route path="/login" element={<LoginScreen />} />
-              <Route path="/doctor/:id" element={<DoctorProfileScreen />} />
-              <Route path="/booking-appointment/:id" element={<BookingAppointmentScreen />} />
-              <Route path="/booking-success" element={<BookingSuccessScreen />} />
-              <Route path="/tests" element={<TestsScreen />} />
-              <Route path="/test/:id" element={<TestBookingScreen />} />
-              <Route path="/my-test-bookings" element={<MyTestBookingsScreen />} />
-              <Route path="/reschedule-success" element={<RescheduleSuccessScreen />} />
-              <Route path="/admin" element={<AdminRoute><AdminDashboardScreen /></AdminRoute>} />
-              <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardScreen /></AdminRoute>} />
-              <Route path="/admin/tests" element={<AdminRoute><AdminTestsScreen /></AdminRoute>} />
-              <Route path="/admin/bookings" element={<AdminRoute><AdminBookingsScreen /></AdminRoute>} />
-              <Route path="/admin/users" element={<AdminRoute><AdminUsersScreen /></AdminRoute>} />
-              <Route path="/admin/pharmacy" element={<AdminRoute><AdminPharmacyScreen /></AdminRoute>} />
-              <Route path="/admin/medication/:id/edit" element={<AdminRoute><AdminPharmacyScreen /></AdminRoute>} />
-              <Route path="/pharmacy" element={<PharmacyScreen />} />
-              <Route path="/pharmacy/order/:id" element={<MedicationOrderScreen />} />
-              <Route path="/doctors/specialty/:specialty" element={<DoctorsBySpecialtyScreen />} />
-              <Route path="/prescription-order" element={<PrescriptionOrderScreen />} />
-              <Route path="/prescription-success" element={<PrescriptionSuccessScreen />} />
-              <Route path="/prescription-orders" element={<PrescriptionOrderListScreen />} />
-              <Route path="/admin/prescription-orders" element={<AdminRoute><AdminPrescriptionOrdersScreen /></AdminRoute>} />
-              <Route path="/admin/prescription-orders/add" element={<AdminRoute><AddPrescriptionOrderScreen /></AdminRoute>} />
-              <Route path="/doctors" element={<DoctorListScreen />} />
-            </Routes>
-=======
             <Switch>
               <Route exact path="/" component={HomeScreen} />
               <Route exact path="/login" component={LoginScreen} />
@@ -130,11 +101,61 @@ function App() {
                   <AddPrescriptionOrderScreen {...props} />
                 </AdminRoute>
               )} />
+              <Route exact path="/doctors" component={DoctorListScreen} />
             </Switch>
->>>>>>> origin/main
           </Suspense>
-        </Container>
-      </main>
+        </main>
+        <Footer />
+      </div>
+
+      <style>
+        {`
+          .app-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+          }
+
+          .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 60px; /* Add margin to account for fixed header */
+          }
+
+          /* Remove any margin from the last child of main-content to prevent extra space before footer */
+          .main-content > *:last-child {
+            margin-bottom: 0;
+          }
+
+          .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+          }
+
+          /* Modern scrollbar */
+          ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+          }
+
+          ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+          }
+
+          ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+          }
+
+          ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+          }
+        `}
+      </style>
     </BrowserRouter>
   );
 }

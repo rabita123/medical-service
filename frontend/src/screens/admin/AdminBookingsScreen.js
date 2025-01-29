@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Container, Table, Button, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { listAllTestBookings, cancelTestBooking, completeTestBooking } from '../../actions/testActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const AdminBookingsScreen = ({ history }) => {
+const AdminBookingsScreen = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -235,4 +236,4 @@ const AdminBookingsScreen = ({ history }) => {
   );
 };
 
-export default withRouter(AdminBookingsScreen); 
+export default AdminBookingsScreen; 

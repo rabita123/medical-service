@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getTestDetails, bookTest } from '../actions/testActions';
 import { TEST_BOOK_RESET } from '../constants/testConstants';
 
-const TestBookingScreen = ({ match, history }) => {
-  const testId = match.params.id;
+const TestBookingScreen = () => {
+  const history = useHistory();
+  const { id } = useParams();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
 
@@ -32,16 +33,16 @@ const TestBookingScreen = ({ match, history }) => {
       history.push('/my-test-bookings');
       dispatch({ type: TEST_BOOK_RESET });
     } else {
-      if (!test._id || test._id !== testId) {
-        dispatch(getTestDetails(testId));
+      if (!test._id || test._id !== id) {
+        dispatch(getTestDetails(id));
       }
     }
-  }, [dispatch, history, userInfo, test, testId, successBook]);
+  }, [dispatch, history, userInfo, test, id, successBook]);
 
   const bookHandler = () => {
     dispatch(
       bookTest({
-        testId,
+        id,
         appointmentDate: selectedDate,
         appointmentTime: selectedTime,
       })
@@ -143,4 +144,4 @@ const TestBookingScreen = ({ match, history }) => {
   );
 };
 
-export default withRouter(TestBookingScreen); 
+export default TestBookingScreen; 

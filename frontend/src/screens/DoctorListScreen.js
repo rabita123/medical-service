@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button, Badge } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { listDoctors } from '../actions/doctorActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const DoctorListScreen = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpeciality, setSelectedSpeciality] = useState('');
 
@@ -31,8 +31,8 @@ const DoctorListScreen = () => {
     doctors?.map(doctor => doctor.specialization).filter(Boolean)
   ));
 
-  const handleBookAppointment = (doctorId) => {
-    navigate(`/booking-appointment/${doctorId}`);
+  const viewProfileHandler = (id) => {
+    history.push(`/doctor/${id}`);
   };
 
   return (
@@ -133,9 +133,9 @@ const DoctorListScreen = () => {
                   <Button
                     variant="primary"
                     className="w-100 book-btn mt-3"
-                    onClick={() => handleBookAppointment(doctor._id)}
+                    onClick={() => viewProfileHandler(doctor._id)}
                   >
-                    Book Appointment
+                    View Profile
                   </Button>
                 </Card.Body>
               </Card>

@@ -1,6 +1,6 @@
 import React, { useEffect, lazy, useState, Suspense, useMemo } from "react";
 import { Row, Col, Container, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listDoctors } from "../actions/doctorActions";
 import { listSpecialists } from "../actions/specialistActions";
@@ -11,7 +11,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const Header = lazy(() => import("../components/Header"));
-const Footer = lazy(() => import("../components/Footer"));
 const TopHeader = lazy(() => import("../components/TopHeader"));
 
 const LoadingSpinner = () => (
@@ -87,6 +86,7 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [dataFetched, setDataFetched] = useState(false);
+  const history = useHistory();
 
   const doctorList = useSelector((state) => state.doctorList);
   const { loading, error, doctors } = doctorList;
@@ -168,11 +168,15 @@ const HomeScreen = () => {
     }
   ];
 
+  const handleLearnMore = (slide) => {
+    history.push('/services');
+  };
+
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Header />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-      <main className="main-content">
+      <main className="main-content" style={{ marginTop: 0 }}>
         <div className="hero-section">
           <Slider {...settings} className="hero-slider">
             {(sliders?.length ? sliders : defaultSlides).map((slide) => (
@@ -193,7 +197,10 @@ const HomeScreen = () => {
                     <div className="slider-text-animation">
                       <h2 className="slider-title">{slide.name}</h2>
                       <p className="slider-description">{slide.description}</p>
-                      <button className="slider-button">
+                      <button 
+                        className="slider-button"
+                        onClick={() => handleLearnMore(slide)}
+                      >
                         Learn More <i className="fas fa-arrow-right ms-2"></i>
                       </button>
                     </div>
@@ -227,15 +234,17 @@ const HomeScreen = () => {
             <Row>
               {features.map((feature, index) => (
                 <Col key={index} md={3} className="mb-4">
-                  <Card className="text-center h-100 border-0 shadow-sm hover-effect">
-                    <Card.Body>
-                      <div className="text-primary mb-3">
-                        <i className={`fas fa-${feature.icon} fa-3x`}></i>
-                      </div>
-                      <Card.Title>{feature.title}</Card.Title>
-                      <Card.Text>{feature.description}</Card.Text>
-                    </Card.Body>
-                  </Card>
+                  <Link to={`/services/${feature.title.toLowerCase().replace(/\s+/g, '-')}`} className="text-decoration-none">
+                    <Card className="text-center h-100 border-0 shadow-sm hover-effect">
+                      <Card.Body>
+                        <div className="text-primary mb-3">
+                          <i className={`fas fa-${feature.icon} fa-3x`}></i>
+                        </div>
+                        <Card.Title>{feature.title}</Card.Title>
+                        <Card.Text>{feature.description}</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Link>
                 </Col>
               ))}
             </Row>
@@ -252,26 +261,28 @@ const HomeScreen = () => {
               <Row>
                 {filteredDoctors.map((doctor) => (
                   <Col key={doctor._id} sm={12} md={6} lg={4} xl={3}>
-                    <Card className="doctor-card mb-4 border-0 shadow-sm hover-effect">
-                      <div className="img-wrapper" style={{ height: "200px", overflow: "hidden" }}>
-                        <Card.Img
-                          variant="top"
-                          src={doctor.image}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://via.placeholder.com/300x300?text=Doctor";
-                          }}
-                          style={{ height: "100%", objectFit: "cover" }}
-                        />
-                      </div>
-                      <Card.Body className="text-center">
-                        <Card.Title>{doctor.name}</Card.Title>
-                        <Card.Text className="text-muted">{doctor.specialization}</Card.Text>
-                        <Link to={`/doctor/${doctor._id}`} className="btn btn-primary">
-                          View Profile
-                        </Link>
-                      </Card.Body>
-                    </Card>
+                    <Link to={`/doctor/${doctor._id}`} className="text-decoration-none">
+                      <Card className="doctor-card mb-4 border-0 shadow-sm hover-effect">
+                        <div className="img-wrapper" style={{ height: "200px", overflow: "hidden" }}>
+                          <Card.Img
+                            variant="top"
+                            src={doctor.image}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://via.placeholder.com/300x300?text=Doctor";
+                            }}
+                            style={{ height: "100%", objectFit: "cover" }}
+                          />
+                        </div>
+                        <Card.Body className="text-center">
+                          <Card.Title className="text-dark">{doctor.name}</Card.Title>
+                          <Card.Text className="text-muted">{doctor.specialization}</Card.Text>
+                          <button className="btn btn-primary">
+                            View Profile
+                          </button>
+                        </Card.Body>
+                      </Card>
+                    </Link>
                   </Col>
                 ))}
               </Row>
@@ -285,20 +296,22 @@ const HomeScreen = () => {
               <Row>
                 {specialties.map((specialty) => (
                   <Col key={specialty.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                    <Card className="specialty-card h-100">
-                      <Card.Body className="text-center">
-                        <div className="specialty-icon mb-3">
-                          <i className={`fas ${specialty.icon} fa-2x`}></i>
-                        </div>
-                        <h3 className="specialty-title">{specialty.name}</h3>
-                        <Link 
-                          to={`/doctors/specialty/${specialty.name.toLowerCase()}`} 
-                          className="btn btn-primary mt-3"
-                        >
-                          Find Doctors
-                        </Link>
-                      </Card.Body>
-                    </Card>
+                    <Link 
+                      to={`/doctors/specialty/${specialty.name.toLowerCase()}`} 
+                      className="text-decoration-none"
+                    >
+                      <Card className="specialty-card h-100">
+                        <Card.Body className="text-center">
+                          <div className="specialty-icon mb-3">
+                            <i className={`fas ${specialty.icon} fa-2x`}></i>
+                          </div>
+                          <h3 className="specialty-title">{specialty.name}</h3>
+                          <button className="btn btn-primary mt-3">
+                            Find Doctors
+                          </button>
+                        </Card.Body>
+                      </Card>
+                    </Link>
                   </Col>
                 ))}
               </Row>
@@ -309,11 +322,16 @@ const HomeScreen = () => {
 
       <style>
         {`
+          .main-content {
+            margin-top: 0 !important;
+          }
+
           .hero-section {
             position: relative;
-            height: 100vh;
+            height: calc(100vh - 60px); /* Subtract navbar height */
             background: #000;
             overflow: hidden;
+            margin-top: 60px; /* Add margin equal to navbar height */
           }
 
           .hero-slider {
@@ -322,7 +340,7 @@ const HomeScreen = () => {
 
           .slider-item {
             position: relative;
-            height: 100vh;
+            height: calc(100vh - 60px); /* Subtract navbar height */
           }
 
           .slider-image-wrapper {
@@ -592,6 +610,7 @@ const HomeScreen = () => {
             border-radius: 25px;
             padding: 0.5rem 1.5rem;
             transition: all 0.3s ease;
+            cursor: pointer;
           }
 
           .btn-primary:hover {
@@ -599,9 +618,47 @@ const HomeScreen = () => {
             border-color: #1c7a94;
             transform: translateY(-2px);
           }
+
+          .text-decoration-none {
+            color: inherit;
+            display: block;
+          }
+
+          .text-decoration-none:hover {
+            text-decoration: none;
+            color: inherit;
+          }
+
+          .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+          }
+
+          .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+          }
+
+          .doctor-card .btn-primary,
+          .specialty-card .btn-primary {
+            pointer-events: auto;
+            position: relative;
+            z-index: 1;
+          }
+
+          .card-link {
+            position: relative;
+            display: block;
+            color: inherit;
+            text-decoration: none;
+          }
+
+          .card-link:hover {
+            color: inherit;
+            text-decoration: none;
+          }
         `}
       </style>
-      <Footer />
     </Suspense>
   );
 };

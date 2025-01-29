@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../config/axios';
 import { Container, Form, Button, Card, Row, Col } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listMedications, createPrescriptionOrder } from '../../actions/pharmacyActions';
 import { PRESCRIPTION_ORDER_CREATE_RESET } from '../../constants/pharmacyConstants';
 
-const AddPrescriptionOrderScreen = ({ history }) => {
+const AddPrescriptionOrderScreen = () => {
+  const history = useHistory();
   console.log('Component mounting');
   
   const dispatch = useDispatch();
@@ -188,4 +189,4 @@ const AddPrescriptionOrderScreen = ({ history }) => {
   );
 };
 
-export default withRouter(AddPrescriptionOrderScreen); 
+export default AddPrescriptionOrderScreen; 

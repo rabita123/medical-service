@@ -1,371 +1,313 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-<<<<<<< HEAD
-import { useNavigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-=======
-import { withRouter, useParams } from "react-router-dom";
->>>>>>> origin/main
-import { listDoctorsProfile } from "../../actions/doctorProfileActions";
-import Footer from "../../components/Footer";
+import { useHistory, useParams } from "react-router-dom";
+import { Row, Col, Image, ListGroup, Card, Button, Container } from "react-bootstrap";
+import { getDoctorDetails } from "../../actions/doctorActions";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
+import Header from '../../components/Header';
 
-const DoctorProfileScreen = ({ history }) => {
+const DoctorProfileScreen = () => {
   const { id } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const doctorProfileList = useSelector((state) => state.doctorProfileList);
-  const { loading, error, doctorsprofiles: doctor } = doctorProfileList;
+  const doctorDetails = useSelector((state) => state.doctorDetails);
+  const { loading, error, doctor } = doctorDetails;
 
   useEffect(() => {
-    if (id) {
-      dispatch(listDoctorsProfile(id));
-    }
-  }, [dispatch, id]);
-
-  const checkoutHandler = (doctorId) => {
-    if (!userInfo) {
-      history.push(`/login?redirect=/booking-appointment/${doctorId}`);
+    if (!id) {
+      history.push('/doctors');
     } else {
-      history.push(`/booking-appointment/${doctorId}`);
+      dispatch(getDoctorDetails(id));
     }
+  }, [dispatch, id, history]);
+
+  const handleBookAppointment = () => {
+    history.push(`/booking-appointment/${id}`);
   };
 
+  // Sample detailed doctor data (you should replace this with actual data from your backend)
+  const doctorData = {
+    ...doctor,
+    bio: doctor?.bio || `Dr. ${doctor?.name || 'John Smith'} is a highly qualified and experienced medical professional specializing in ${doctor?.specialization || 'medicine'}. With years of dedicated service in healthcare, they are committed to providing exceptional patient care and staying at the forefront of medical advancements.`,
+    education: doctor?.education || [
+      {
+        degree: "Doctor of Medicine (MD)",
+        institution: "Harvard Medical School",
+        year: "2010"
+      },
+      {
+        degree: "Residency in Internal Medicine",
+        institution: "Massachusetts General Hospital",
+        year: "2013"
+      },
+      {
+        degree: "Fellowship in Cardiology",
+        institution: "Johns Hopkins Hospital",
+        year: "2015"
+      }
+    ],
+    specialties: doctor?.specialties || [
+      "General Medicine",
+      "Cardiology",
+      "Internal Medicine",
+      "Critical Care"
+    ],
+    experience: doctor?.experience || [
+      {
+        position: "Senior Cardiologist",
+        hospital: "City General Hospital",
+        duration: "2015 - Present",
+        description: "Leading the cardiology department and managing complex cardiac cases"
+      },
+      {
+        position: "Consultant Physician",
+        hospital: "Medical Center",
+        duration: "2013 - 2015",
+        description: "Provided comprehensive patient care and conducted medical research"
+      }
+    ],
+    awards: doctor?.awards || [
+      "Excellence in Medical Service Award (2019)",
+      "Best Physician of the Year (2018)",
+      "Research Excellence Award (2017)"
+    ],
+    publications: doctor?.publications || [
+      {
+        title: "Advanced Cardiac Care Techniques",
+        journal: "Medical Science Journal",
+        year: "2020"
+      },
+      {
+        title: "Modern Approaches in Internal Medicine",
+        journal: "Healthcare Review",
+        year: "2019"
+      }
+    ]
+  };
+
+  if (loading) return (
+    <>
+      <Header />
+      <Container className="py-5">
+        <Loader />
+      </Container>
+    </>
+  );
+
+  if (error) return (
+    <>
+      <Header />
+      <Container className="py-5">
+        <Message variant="danger">{error}</Message>
+      </Container>
+    </>
+  );
+
+  if (!doctor) return (
+    <>
+      <Header />
+      <Container className="py-5">
+        <Message>Doctor not found</Message>
+      </Container>
+    </>
+  );
+
   return (
-    <div className="main-wrapper">
-      <div className="breadcrumb-bar">
-        <div className="container-fluid">
-          <div className="row align-items-center">
-            <div className="col-md-12 col-12">
-              <nav aria-label="breadcrumb" className="page-breadcrumb">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <Link to="/">Home</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to="/doctors">Doctors</Link>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Doctor Profile
-                  </li>
-                </ol>
-              </nav>
-              <h2 className="breadcrumb-title">Doctor Profile</h2>
-            </div>
-          </div>
-        </div>
-      </div>
+    <>
+      <Header />
+      <Container className="py-5">
+        <Row>
+          <Col md={4}>
+            <Card className="mb-4">
+              <Card.Img
+                variant="top"
+                src={doctorData.image || 'https://via.placeholder.com/300x300?text=Doctor'}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://via.placeholder.com/300x300?text=Doctor';
+                }}
+                alt={doctorData.name}
+                className="doctor-profile-img"
+              />
+              <Card.Body className="text-center">
+                <Card.Title as="h3">{doctorData.name || 'Doctor Name'}</Card.Title>
+                <Card.Subtitle className="mb-3 text-muted">
+                  {doctorData.specialization || 'Specialization'}
+                </Card.Subtitle>
+                <Button
+                  variant="primary"
+                  className="w-100 mb-2"
+                  onClick={handleBookAppointment}
+                >
+                  Book Appointment
+                </Button>
+              </Card.Body>
+            </Card>
 
-      <div className="content">
-        <div className="container">
-          {loading ? (
-            <Loader />
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
-          ) : !doctor ? (
-            <Message variant="info">No doctor profile found</Message>
-          ) : (
-            <>
-              <div className="card doctor-profile-card">
-                <div className="card-body">
-                  <div className="doctor-widget">
-                    <div className="doc-info-left">
-                      <div className="doctor-img">
-                        <img
-                          src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
-                          className="img-fluid"
-                          alt={doctor.name}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
-                          }}
-                        />
-                      </div>
-                      <div className="doc-info-cont">
-                        <h4 className="doc-name mb-2">{doctor.name || 'Doctor'}</h4>
-                        <p className="doc-speciality mb-2">{doctor.degree || 'Medical Professional'}</p>
-                        {doctor.specialization && (
-                          <p className="doc-department mb-3">
-                            <img
-                              src="/assets/img/specialities/specialities-05.png"
-                              className="img-fluid me-2"
-                              alt="Speciality"
-                              style={{ width: '24px', height: '24px' }}
-                            />
-                            {doctor.specialization}
-                          </p>
-                        )}
-                        <div className="clinic-details">
-                          {doctor.location && (
-                            <p className="doc-location mb-2">
-                              <i className="fas fa-map-marker-alt me-2"></i>
-                              {doctor.location}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="doc-info-right">
-                      <div className="clini-infos">
-                        <ul>
-                          {doctor.fees && (
-                            <li>
-                              <i className="far fa-money-bill-alt me-2"></i>
-                              <span className="info-title">Consultation Fee:</span>
-                              <span className="info-value">{doctor.fees} BDT</span>
-                            </li>
-                          )}
-                          {doctor.days && (
-                            <li>
-                              <i className="far fa-calendar-alt me-2"></i>
-                              <span className="info-title">Available Days:</span>
-                              <span className="info-value">{doctor.days}</span>
-                            </li>
-                          )}
-                          {doctor.times && (
-                            <li>
-                              <i className="far fa-clock me-2"></i>
-                              <span className="info-title">Consultation Hours:</span>
-                              <span className="info-value">{doctor.times}</span>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                      <div className="clinic-booking">
-                        <button
-                          className="btn btn-primary apt-btn"
-                          onClick={() => checkoutHandler(doctor._id)}
-                        >
-                          Book Appointment
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Contact Information</Card.Title>
+                <ListGroup variant="flush">
+                  {doctorData.email && (
+                    <ListGroup.Item>
+                      <i className="fas fa-envelope me-2"></i>
+                      {doctorData.email}
+                    </ListGroup.Item>
+                  )}
+                  {doctorData.phone && (
+                    <ListGroup.Item>
+                      <i className="fas fa-phone me-2"></i>
+                      {doctorData.phone}
+                    </ListGroup.Item>
+                  )}
+                  {doctorData.address && (
+                    <ListGroup.Item>
+                      <i className="fas fa-map-marker-alt me-2"></i>
+                      {doctorData.address}
+                    </ListGroup.Item>
+                  )}
+                </ListGroup>
+              </Card.Body>
+            </Card>
 
-              <div className="card">
-                <div className="card-body">
-                  <div className="doctor-description">
-                    <h5 className="card-title mb-3">About Doctor</h5>
-                    <p className="mb-0">
-                      {doctor.description || 'A dedicated healthcare professional committed to providing quality medical care to patients.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Awards & Recognition</Card.Title>
+                <ListGroup variant="flush">
+                  {doctorData.awards.map((award, index) => (
+                    <ListGroup.Item key={index}>
+                      <i className="fas fa-award me-2 text-warning"></i>
+                      {award}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card.Body>
+            </Card>
+          </Col>
 
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title mb-3">Services Offered</h5>
-                  <div className="service-list">
-                    <ul className="list-unstyled">
-                      {doctor.services ? (
-                        doctor.services.map((service, index) => (
-                          <li key={index}>
-                            <i className="fas fa-check-circle text-success me-2"></i>
-                            {service}
-                          </li>
-                        ))
-                      ) : (
-                        <>
-                          <li><i className="fas fa-check-circle text-success me-2"></i>General Consultation</li>
-                          <li><i className="fas fa-check-circle text-success me-2"></i>Diagnosis & Treatment</li>
-                          <li><i className="fas fa-check-circle text-success me-2"></i>Medical Prescriptions</li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
+          <Col md={8}>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>About</Card.Title>
+                <Card.Text>{doctorData.bio}</Card.Text>
+              </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Specializations</Card.Title>
+                <div className="d-flex flex-wrap gap-2">
+                  {doctorData.specialties.map((specialty, index) => (
+                    <span key={index} className="badge bg-primary">
+                      {specialty}
+                    </span>
+                  ))}
                 </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+              </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Education</Card.Title>
+                <ListGroup variant="flush">
+                  {doctorData.education.map((edu, index) => (
+                    <ListGroup.Item key={index}>
+                      <h6>{edu.degree}</h6>
+                      <p className="text-muted mb-0">
+                        {edu.institution} ({edu.year})
+                      </p>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Professional Experience</Card.Title>
+                <ListGroup variant="flush">
+                  {doctorData.experience.map((exp, index) => (
+                    <ListGroup.Item key={index}>
+                      <h6>{exp.position}</h6>
+                      <p className="text-muted mb-1">{exp.hospital} | {exp.duration}</p>
+                      <p className="mb-0">{exp.description}</p>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card.Body>
+            </Card>
+
+            <Card>
+              <Card.Body>
+                <Card.Title>Publications</Card.Title>
+                <ListGroup variant="flush">
+                  {doctorData.publications.map((pub, index) => (
+                    <ListGroup.Item key={index}>
+                      <h6>{pub.title}</h6>
+                      <p className="text-muted mb-0">
+                        {pub.journal} ({pub.year})
+                      </p>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
 
       <style>
         {`
-          .doctor-profile-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-          }
-
-          .doctor-widget {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-          }
-
-          .doc-info-left {
-            flex: 1;
-            min-width: 300px;
-            display: flex;
-            gap: 20px;
-          }
-
-          .doctor-img {
-            width: 150px;
-            height: 150px;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-          }
-
-          .doctor-img img {
-            width: 100%;
-            height: 100%;
+          .doctor-profile-img {
+            height: 300px;
             object-fit: cover;
           }
 
-          .doc-info-cont {
-            flex: 1;
+          .badge {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
           }
 
-          .doc-name {
-            color: #272b41;
-            font-size: 1.5rem;
+          .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+          }
+
+          .list-group-item {
+            border: none;
+            padding: 1rem 0;
+          }
+
+          .list-group-item:not(:last-child) {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+          }
+
+          .btn-primary {
+            padding: 0.75rem 1.5rem;
             font-weight: 600;
           }
 
-          .doc-speciality {
-            color: #757575;
-            font-size: 1rem;
-          }
-
-          .doc-department {
-            display: flex;
-            align-items: center;
+          h6 {
             color: #2193b0;
-            font-weight: 500;
+            font-weight: 600;
           }
 
-          .doc-info-right {
-            flex: 1;
-            min-width: 300px;
+          .text-muted {
+            color: #6c757d !important;
           }
 
-          .clini-infos ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-          }
-
-          .clini-infos li {
-            position: relative;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .clini-infos li:last-child {
-            border-bottom: none;
-          }
-
-          .clini-infos i {
-            color: #2193b0;
-            width: 20px;
-          }
-
-          .info-title {
-            color: #757575;
-            margin-right: 10px;
-          }
-
-          .info-value {
-            color: #272b41;
-            font-weight: 500;
-          }
-
-          .clinic-booking {
-            margin-top: 20px;
-          }
-
-          .apt-btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 500;
-            background: #2193b0;
-            border: none;
-            transition: all 0.3s ease;
-          }
-
-          .apt-btn:hover {
-            background: #1c7a94;
-            transform: translateY(-2px);
-          }
-
-          .service-list ul {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-          }
-
-          .service-list li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #272b41;
-          }
-
-          .breadcrumb-bar {
-            background: linear-gradient(45deg, #2193b0, #6dd5ed);
-            padding: 20px 0;
-            margin-bottom: 30px;
-          }
-
-          .breadcrumb {
-            margin: 0;
-          }
-
-          .breadcrumb-item a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-          }
-
-          .breadcrumb-item.active {
-            color: #fff;
-          }
-
-          .breadcrumb-title {
-            color: #fff;
-            margin: 5px 0 0;
-            font-size: 1.75rem;
-            font-weight: 500;
-          }
-
-          @media (max-width: 768px) {
-            .doctor-widget {
-              flex-direction: column;
-              gap: 20px;
-            }
-
-            .doc-info-left {
-              flex-direction: column;
-              align-items: center;
-              text-align: center;
-            }
-
-            .doc-info-right {
-              width: 100%;
-            }
-
-            .service-list ul {
-              grid-template-columns: 1fr;
-            }
+          .card-title {
+            color: #1a2980;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
           }
         `}
       </style>
-    </div>
+    </>
   );
 };
 
-export default withRouter(DoctorProfileScreen);
+export default DoctorProfileScreen;

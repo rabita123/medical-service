@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { listUsers, deleteUser, updateUser } from '../../actions/userActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
-const AdminUsersScreen = ({ history }) => {
+const AdminUsersScreen = () => {
+  const history = useHistory();
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -255,4 +256,4 @@ const AdminUsersScreen = ({ history }) => {
   );
 };
 
-export default withRouter(AdminUsersScreen);
+export default AdminUsersScreen;

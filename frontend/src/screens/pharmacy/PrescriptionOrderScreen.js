@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { createPrescriptionOrder } from '../../actions/pharmacyActions';
 
-const PrescriptionOrderScreen = ({ history }) => {
+const PrescriptionOrderScreen = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const [selectedMedication, setSelectedMedication] = useState('');
@@ -70,6 +71,7 @@ const PrescriptionOrderScreen = ({ history }) => {
     }));
 
     dispatch(createPrescriptionOrder(formData));
+    history.push('/success-page');
   };
 
   return (
@@ -310,4 +312,4 @@ const PrescriptionOrderScreen = ({ history }) => {
   );
 };
 
-export default withRouter(PrescriptionOrderScreen); 
+export default PrescriptionOrderScreen; 
