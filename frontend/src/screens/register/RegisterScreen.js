@@ -46,14 +46,19 @@ const RegisterScreen = () => {
               <Row className="align-items-center justify-content-center">
                 <Col md={6} className="login-left">
                   <img
-                    src="/images/register-illustration.png"
+                    src="/assets/img/medical-system.jpeg"
                     className="img-fluid"
-                    alt="Register"
+                    alt="Medical Registration"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "https://via.placeholder.com/800x600?text=Join+Our+Medical+Community";
+                      e.target.src = "/assets/img/login-banner.png";
                     }}
                   />
+                  <div className="login-overlay">
+                    <h2>Welcome to Medical Service</h2>
+                    <p>Your trusted healthcare platform</p>
+                  </div>
                 </Col>
                 <Col md={6} className="login-right">
                   <div className="login-header">
