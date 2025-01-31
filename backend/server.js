@@ -19,10 +19,12 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000'],
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://medical-service-facility0907027.netlify.app', 'https://679ca44e8797e700871067a--medical-service-facility0907027.netlify.app']
+    : ['http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false,
+  credentials: true,
   optionsSuccessStatus: 200
 };
 
