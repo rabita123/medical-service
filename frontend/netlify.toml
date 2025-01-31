@@ -8,12 +8,6 @@
   NODE_OPTIONS = "--openssl-legacy-provider"
 
 [[redirects]]
-  from = "https://679c7d70f1c20a0cdc90fc1d--medical-service-facility0907027.netlify.app/*"
-  to = "https://medical-service-facility0907027.netlify.app/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
   from = "/api/*"
   to = "https://medical-service-backend-eg8t.onrender.com/api/:splat"
   status = 200
