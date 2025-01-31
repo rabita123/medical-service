@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { createPrescriptionOrder } from '../../actions/pharmacyActions';
 
 const PrescriptionOrderScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [selectedMedication, setSelectedMedication] = useState('');
@@ -36,13 +36,13 @@ const PrescriptionOrderScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
     }
 
     if (successCreate) {
-      history.push('/prescription-success');
+      navigate('/prescription-success');
     }
-  }, [history, userInfo, successCreate]);
+  }, [navigate, userInfo, successCreate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -58,20 +58,15 @@ const PrescriptionOrderScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('medication', selectedMedication);
-    formData.append('quantity', quantity);
-    formData.append('prescriptionImage', prescriptionImage);
-    formData.append('shippingAddress', JSON.stringify({
+    dispatch(createPrescriptionOrder({
+      medication: selectedMedication,
+      quantity,
+      prescriptionImage,
       address,
       city,
       postalCode,
-      country,
-      deliveryInstructions
     }));
-
-    dispatch(createPrescriptionOrder(formData));
-    history.push('/success-page');
+    navigate('/prescription-orders');
   };
 
   return (

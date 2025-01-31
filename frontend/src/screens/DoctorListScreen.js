@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button, Badge } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { listDoctors } from '../actions/doctorActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const DoctorListScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpeciality, setSelectedSpeciality] = useState('');
 
@@ -39,7 +39,7 @@ const DoctorListScreen = () => {
   ));
 
   const viewProfileHandler = (id) => {
-    history.push(`/doctor/${id}`);
+    navigate(`/doctor/${id}`);
   };
 
   if (loading) {

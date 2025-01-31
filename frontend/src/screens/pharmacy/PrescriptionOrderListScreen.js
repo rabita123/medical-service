@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Table, Badge } from 'react-bootstrap';
 import Header from '../../components/Header';
@@ -8,7 +8,7 @@ import Loader from '../../components/Loader';
 import { listPrescriptionOrders } from '../../actions/pharmacyActions';
 
 const PrescriptionOrderListScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -19,11 +19,11 @@ const PrescriptionOrderListScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
     } else {
       dispatch(listPrescriptionOrders());
     }
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, navigate, userInfo]);
 
   const getStatusBadge = (status) => {
     switch (status.toLowerCase()) {

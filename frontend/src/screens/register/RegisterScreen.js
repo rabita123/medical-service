@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../../components/Message";
@@ -8,7 +8,7 @@ import { register } from "../../actions/userActions";
 import "./RegisterScreen.css";
 
 const RegisterScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +24,9 @@ const RegisterScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      history.push(redirect);
+      navigate('/');
     }
-  }, [history, userInfo, redirect]);
+  }, [navigate, userInfo]);
 
   const submitHandler = (e) => {
     e.preventDefault();

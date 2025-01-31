@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, Button, Row, Col, Modal, Form, Container, Card } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { listMedications, createMedication } from '../../actions/pharmacyActions';
@@ -9,7 +9,7 @@ import { MEDICATION_CREATE_RESET } from '../../constants/pharmacyConstants';
 import Header from '../../components/Header';
 
 const AdminPharmacyScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +38,9 @@ const AdminPharmacyScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      history.push('/login');
+      navigate('/login');
+    } else {
+      dispatch(listMedications());
     }
 
     if (successCreate) {
@@ -46,9 +48,7 @@ const AdminPharmacyScreen = () => {
       setShowModal(false);
       resetForm();
     }
-
-    dispatch(listMedications());
-  }, [dispatch, history, userInfo, successCreate]);
+  }, [dispatch, navigate, userInfo, successCreate]);
 
   const resetForm = () => {
     setName('');
@@ -156,7 +156,7 @@ const AdminPharmacyScreen = () => {
                             <Button
                               variant='outline-primary'
                               className='btn-sm rounded-pill'
-                              onClick={() => history.push(`/admin/medication/${medication._id}/edit`)}
+                              onClick={() => navigate(`/admin/medication/${medication._id}/edit`)}
                             >
                               <i className='fas fa-edit'></i>
                             </Button>

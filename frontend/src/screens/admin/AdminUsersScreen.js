@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Table, Button, Badge, Modal, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { listUsers, deleteUser, updateUser } from '../../actions/userActions';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 
 const AdminUsersScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -32,11 +32,11 @@ const AdminUsersScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      history.push('/login');
+      navigate('/login');
     } else {
       dispatch(listUsers());
     }
-  }, [dispatch, history, userInfo, successDelete, successUpdate]);
+  }, [dispatch, navigate, userInfo, successDelete, successUpdate]);
 
   const handleDelete = (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {

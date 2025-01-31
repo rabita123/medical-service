@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { listTests } from '../actions/testActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
-const TestsScreen = ({ history }) => {
+const TestsScreen = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const TestsScreen = ({ history }) => {
   }, [dispatch]);
 
   const handleTestClick = (id) => {
-    history.push(`/test/${id}`);
+    navigate(`/test/${id}`);
   };
 
   const filteredTests = tests?.filter(test =>
@@ -215,4 +216,4 @@ const TestsScreen = ({ history }) => {
   );
 };
 
-export default withRouter(TestsScreen); 
+export default TestsScreen; 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -8,7 +8,7 @@ import { getTestDetails, bookTest } from '../actions/testActions';
 import { TEST_BOOK_RESET } from '../constants/testConstants';
 
 const TestBookingScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -26,18 +26,18 @@ const TestBookingScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
     }
 
     if (successBook) {
-      history.push('/my-test-bookings');
+      navigate('/my-test-bookings');
       dispatch({ type: TEST_BOOK_RESET });
     } else {
       if (!test._id || test._id !== id) {
         dispatch(getTestDetails(id));
       }
     }
-  }, [dispatch, history, userInfo, test, id, successBook]);
+  }, [dispatch, navigate, userInfo, test, id, successBook]);
 
   const bookHandler = () => {
     dispatch(

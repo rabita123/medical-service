@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Card, Table, Badge, Button } from 'react-bootstrap';
 import Header from '../../components/Header';
@@ -9,7 +9,7 @@ import { listPrescriptionOrders, updatePrescriptionOrderStatus } from '../../act
 import { PRESCRIPTION_ORDER_STATUS_UPDATE_RESET } from '../../constants/pharmacyConstants';
 
 const AdminPrescriptionOrdersScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -27,7 +27,7 @@ const AdminPrescriptionOrdersScreen = () => {
 
   useEffect(() => {
     if (!userInfo || !userInfo.isAdmin) {
-      history.push('/login');
+      navigate('/login');
     } else {
       dispatch(listPrescriptionOrders());
     }
@@ -35,7 +35,7 @@ const AdminPrescriptionOrdersScreen = () => {
     if (successUpdate) {
       dispatch({ type: PRESCRIPTION_ORDER_STATUS_UPDATE_RESET });
     }
-  }, [dispatch, history, userInfo, successUpdate]);
+  }, [dispatch, navigate, userInfo, successUpdate]);
 
   const getStatusBadge = (status) => {
     switch (status.toLowerCase()) {
@@ -79,7 +79,7 @@ const AdminPrescriptionOrdersScreen = () => {
               <Col xs="auto">
                 <Button
                   variant="primary"
-                  onClick={() => history.push('/admin/prescription-orders/add')}
+                  onClick={() => navigate('/admin/prescription-orders/add')}
                   className="rounded-pill px-4"
                 >
                   <i className="fas fa-plus me-2"></i>

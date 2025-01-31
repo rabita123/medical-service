@@ -1,6 +1,6 @@
 import React, { useEffect, lazy, useState, Suspense, useMemo } from "react";
 import { Row, Col, Container, Card } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listDoctors } from "../actions/doctorActions";
 import { listSliders } from "../actions/sliderActions";
@@ -69,7 +69,7 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [dataFetched, setDataFetched] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const doctorList = useSelector((state) => state.doctorList);
   const { loading, error, doctors } = doctorList;
@@ -148,7 +148,7 @@ const HomeScreen = () => {
   ];
 
   const handleLearnMore = (slide) => {
-    history.push('/services');
+    navigate('/services');
   };
 
   return (

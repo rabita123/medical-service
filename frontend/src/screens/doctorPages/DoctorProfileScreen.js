@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button, Container } from "react-bootstrap";
 import { getDoctorDetails } from "../../actions/doctorActions";
 import Loader from "../../components/Loader";
@@ -9,7 +9,7 @@ import Header from '../../components/Header';
 
 const DoctorProfileScreen = () => {
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const doctorDetails = useSelector((state) => state.doctorDetails);
@@ -17,14 +17,14 @@ const DoctorProfileScreen = () => {
 
   useEffect(() => {
     if (!id) {
-      history.push('/doctors');
+      navigate('/doctors');
     } else {
       dispatch(getDoctorDetails(id));
     }
-  }, [dispatch, id, history]);
+  }, [dispatch, id, navigate]);
 
   const handleBookAppointment = () => {
-    history.push(`/booking-appointment/${id}`);
+    navigate(`/booking/${id}`);
   };
 
   // Sample detailed doctor data (you should replace this with actual data from your backend)

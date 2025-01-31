@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Table, Button, Badge } from 'react-bootstrap';
 import { listMyTestBookings, cancelTestBooking } from '../actions/testActions';
@@ -7,7 +7,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 const MyTestBookingsScreen = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -21,11 +21,11 @@ const MyTestBookingsScreen = () => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
     } else {
       dispatch(listMyTestBookings());
     }
-  }, [dispatch, history, userInfo, successCancel]);
+  }, [dispatch, navigate, userInfo, successCancel]);
 
   const handleCancel = (bookingId) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { withRouter, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { listDoctorsProfile } from "../../actions/doctorProfileActions";
 import Footer from "../../components/Footer";
 import { createAppointment } from "../../actions/orderActions";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 
-const BookingAppointmentScreen = ({ history }) => {
+const BookingAppointmentScreen = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -23,11 +24,11 @@ const BookingAppointmentScreen = ({ history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      navigate('/login');
     } else if (id) {
       dispatch(listDoctorsProfile(id));
     }
-  }, [dispatch, id, userInfo, history]);
+  }, [dispatch, id, userInfo, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ const BookingAppointmentScreen = ({ history }) => {
         appointmentTime,
       })
     );
-    history.push("/booking-success");
+    navigate("/booking-success");
   };
 
   // Get today's date in YYYY-MM-DD format for min date in date picker
@@ -150,4 +151,4 @@ const BookingAppointmentScreen = ({ history }) => {
   );
 };
 
-export default withRouter(BookingAppointmentScreen);
+export default BookingAppointmentScreen;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { withRouter } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -18,7 +17,8 @@ import {
   createPrescriptionOrder,
 } from '../../actions/pharmacyActions';
 
-const MedicationOrderScreen = ({ history }) => {
+const MedicationOrderScreen = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -43,15 +43,21 @@ const MedicationOrderScreen = ({ history }) => {
     success: successCreate,
   } = prescriptionOrderCreate;
 
+  const userInfo = useSelector((state) => state.userLogin.userInfo);
+
   useEffect(() => {
-    dispatch(getMedicationDetails(id));
-  }, [dispatch, id]);
+    if (!userInfo) {
+      navigate('/login');
+    } else {
+      dispatch(getMedicationDetails(id));
+    }
+  }, [dispatch, id, navigate, userInfo]);
 
   useEffect(() => {
     if (successCreate) {
-      history.push('/pharmacy/orders');
+      navigate('/pharmacy/orders');
     }
-  }, [history, successCreate]);
+  }, [navigate, successCreate]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -73,6 +79,7 @@ const MedicationOrderScreen = ({ history }) => {
       formData.append('prescription', prescriptionFile);
     }
     dispatch(createPrescriptionOrder(formData));
+    navigate('/prescription-orders');
   };
 
   return (
@@ -241,4 +248,4 @@ const MedicationOrderScreen = ({ history }) => {
   );
 };
 
-export default withRouter(MedicationOrderScreen);
+export default MedicationOrderScreen;

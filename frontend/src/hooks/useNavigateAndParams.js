@@ -1,18 +1,18 @@
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const useNavigateAndParams = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
 
-  const navigate = (path, options = {}) => {
+  const navigateTo = (path, options = {}) => {
     if (options.replace) {
-      history.replace(path);
+      navigate(path);
     } else {
-      history.push(path);
+      navigate(path);
     }
   };
 
-  return { navigate, params };
+  return { navigateTo, params };
 };
 
 export default useNavigateAndParams; 

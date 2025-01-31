@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../config/axios';
 import { Container, Form, Button, Card, Row, Col } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
@@ -9,9 +9,7 @@ import { listMedications, createPrescriptionOrder } from '../../actions/pharmacy
 import { PRESCRIPTION_ORDER_CREATE_RESET } from '../../constants/pharmacyConstants';
 
 const AddPrescriptionOrderScreen = () => {
-  const history = useHistory();
-  console.log('Component mounting');
-  
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [medication, setMedication] = useState('');
@@ -36,22 +34,11 @@ const AddPrescriptionOrderScreen = () => {
   const { loading, error, success } = prescriptionOrderCreate;
 
   useEffect(() => {
-    console.log('useEffect running with userInfo:', userInfo);
-    if (!userInfo || !userInfo.isAdmin) {
-      console.log('Redirecting to login');
-      history.push('/login');
-      return;
+    if (!userInfo) {
+      navigate('/login');
     }
-
-    console.log('Dispatching listMedications');
     dispatch(listMedications());
-
-    if (success) {
-      console.log('Order creation successful, redirecting');
-      dispatch({ type: PRESCRIPTION_ORDER_CREATE_RESET });
-      history.push('/admin/prescription-orders');
-    }
-  }, [dispatch, history, userInfo, success]);
+  }, [dispatch, navigate, userInfo]);
 
   const uploadFileHandler = async (e) => {
     console.log('Starting file upload');
@@ -80,20 +67,13 @@ const AddPrescriptionOrderScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log('Submitting form with data:', {
+    dispatch(createPrescriptionOrder({
       medication,
       quantity,
       prescriptionImage,
       deliveryAddress,
-    });
-    dispatch(
-      createPrescriptionOrder({
-        medication,
-        quantity,
-        prescriptionImage,
-        deliveryAddress,
-      })
-    );
+    }));
+    navigate('/prescription-orders');
   };
 
   console.log('Rendering component with medications:', medications);
