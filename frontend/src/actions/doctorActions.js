@@ -17,13 +17,11 @@ import {
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: config.NODE_ENV === 'production' ? config.PRODUCTION_API_URL : config.API_URL,
+  baseURL: 'https://medical-service-backend-eg8t.onrender.com',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Access-Control-Allow-Origin': '*'
-  },
-  withCredentials: false
+    'Accept': 'application/json'
+  }
 });
 
 // Add request interceptor for debugging
@@ -41,7 +39,7 @@ api.interceptors.request.use(
 // Add response interceptor for better error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('Received response:', response.data);
+    console.log('Raw response:', response);
     return response;
   },
   (error) => {
@@ -88,20 +86,25 @@ export const listDoctors = () => async (dispatch) => {
     let doctorsData = response.data;
     console.log('Response data:', doctorsData);
 
-    // Handle different response formats
-    if (!doctorsData) {
-      throw new Error('No data received from server');
-    }
-
-    // If the data is wrapped in a 'doctors' property, extract it
-    if (doctorsData.doctors) {
-      doctorsData = doctorsData.doctors;
-    }
-
-    // Ensure we have an array
+    // Ensure we have an array of doctors
     if (!Array.isArray(doctorsData)) {
-      doctorsData = [doctorsData];
+      doctorsData = doctorsData.doctors || [];
     }
+
+    // Validate each doctor object
+    doctorsData = doctorsData.map(doctor => ({
+      _id: doctor._id || '',
+      name: doctor.name || '',
+      image: doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg',
+      fees: doctor.fees || '',
+      location: doctor.location || '',
+      degree: doctor.degree || '',
+      specialization: doctor.specialization || '',
+      days: doctor.days || '',
+      times: doctor.times || '',
+      rating: doctor.rating || '4.5',
+      experience: doctor.experience || '5+'
+    }));
 
     console.log('Processed doctors data:', doctorsData);
 

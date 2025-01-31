@@ -14,14 +14,16 @@ const DoctorListScreen = () => {
   const dispatch = useDispatch();
 
   const doctorList = useSelector((state) => state.doctorList);
-  const { loading, error, doctors = [] } = doctorList;
+  const { loading, error, doctors } = doctorList;
 
   useEffect(() => {
+    console.log('Dispatching listDoctors action');
     dispatch(listDoctors());
   }, [dispatch]);
 
   // Safely handle doctors array
   const safeDoctors = Array.isArray(doctors) ? doctors : [];
+  console.log('Safe doctors array:', safeDoctors);
 
   const filteredDoctors = safeDoctors.filter(doctor =>
     (doctor?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,6 +41,32 @@ const DoctorListScreen = () => {
   const viewProfileHandler = (id) => {
     history.push(`/doctor/${id}`);
   };
+
+  if (loading) {
+    return (
+      <Container className="py-5">
+        <Loader />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-5">
+        <Message variant="danger">
+          {error}
+          <br />
+          <Button 
+            variant="outline-primary" 
+            className="mt-3"
+            onClick={() => dispatch(listDoctors())}
+          >
+            Try Again
+          </Button>
+        </Message>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-5">
@@ -73,11 +101,7 @@ const DoctorListScreen = () => {
         </Col>
       </Row>
 
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : filteredDoctors.length === 0 ? (
+      {filteredDoctors.length === 0 ? (
         <Message>No doctors found</Message>
       ) : (
         <Row>
