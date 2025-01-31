@@ -6,12 +6,11 @@
   NODE_ENV = "production"
   CI = "false"
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+[[redirects]]
+  from = "https://679c7d70f1c20a0cdc90fc1d--medical-service-facility0907027.netlify.app/*"
+  to = "https://medical-service-facility0907027.netlify.app/:splat"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/api/*"
@@ -24,4 +23,11 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true 
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization" 
