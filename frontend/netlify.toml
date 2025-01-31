@@ -3,9 +3,10 @@
   publish = "build"
 
 [build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
   NODE_ENV = "production"
   CI = "false"
-  NODE_OPTIONS = "--openssl-legacy-provider"
 
 [[redirects]]
   from = "/api/*"
