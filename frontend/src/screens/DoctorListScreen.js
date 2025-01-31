@@ -14,21 +14,26 @@ const DoctorListScreen = () => {
   const dispatch = useDispatch();
 
   const doctorList = useSelector((state) => state.doctorList);
-  const { loading, error, doctors } = doctorList;
+  const { loading, error, doctors = [] } = doctorList;
 
   useEffect(() => {
     dispatch(listDoctors());
   }, [dispatch]);
 
-  const filteredDoctors = doctors?.filter(doctor =>
-    (doctor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.specialization?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (!selectedSpeciality || doctor.specialization === selectedSpeciality)
-  ) || [];
+  // Safely handle doctors array
+  const safeDoctors = Array.isArray(doctors) ? doctors : [];
+
+  const filteredDoctors = safeDoctors.filter(doctor =>
+    (doctor?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doctor?.specialization?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (!selectedSpeciality || doctor?.specialization === selectedSpeciality)
+  );
 
   // Get unique specialities
   const uniqueSpecialities = Array.from(new Set(
-    doctors?.map(doctor => doctor.specialization).filter(Boolean)
+    safeDoctors
+      .map(doctor => doctor?.specialization)
+      .filter(Boolean)
   ));
 
   const viewProfileHandler = (id) => {

@@ -35,12 +35,13 @@ export const doctorListReducer = (state = initialDoctorListState, action) => {
       return {
         ...state,
         loading: true,
-        error: null
+        error: null,
+        doctors: []
       };
     case DOCTOR_LIST_SUCCESS:
       return {
         loading: false,
-        doctors: action.payload,
+        doctors: Array.isArray(action.payload) ? action.payload : [],
         error: null,
         lastUpdated: new Date().toISOString()
       };
@@ -49,6 +50,7 @@ export const doctorListReducer = (state = initialDoctorListState, action) => {
         ...state,
         loading: false,
         error: action.payload,
+        doctors: [],
         lastUpdated: new Date().toISOString()
       };
     default:
