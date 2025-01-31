@@ -1,26 +1,38 @@
 import axios from 'axios';
-import config from './config';
 
 const instance = axios.create({
-  baseURL: config.NODE_ENV === 'production' ? config.PRODUCTION_API_URL : config.API_URL,
+  baseURL: 'https://medical-service-backend-eg8t.onrender.com',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Add a request interceptor to include the token
+// Add request interceptor for debugging
 instance.interceptors.request.use(
   (config) => {
-    const userInfo = localStorage.getItem('userInfo');
-    if (userInfo) {
-      const token = JSON.parse(userInfo).token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
+    console.log('Making request to:', config.url);
     return config;
   },
   (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+instance.interceptors.response.use(
+  (response) => {
+    console.log('Response received:', response.data);
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.error('Error response:', error.response.data);
+    } else if (error.request) {
+      console.error('No response received');
+    } else {
+      console.error('Error:', error.message);
+    }
     return Promise.reject(error);
   }
 );

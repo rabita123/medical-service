@@ -1,5 +1,4 @@
-import axios from "axios";
-import config from "../config";
+import axios from "../axios";
 import {
   DOCTOR_LIST_REQUEST,
   DOCTOR_LIST_SUCCESS,
@@ -77,16 +76,7 @@ export const listDoctors = () => async (dispatch) => {
     dispatch({ type: DOCTOR_LIST_REQUEST });
     
     console.log('Fetching doctors list...');
-    
-    // First try to verify the API is accessible
-    try {
-      const testResponse = await fetch('https://medical-service-backend-eg8t.onrender.com/api/doctors');
-      console.log('Test fetch response:', testResponse);
-    } catch (testError) {
-      console.error('Test fetch failed:', testError);
-    }
-    
-    const response = await api.get("/api/doctors");
+    const response = await axios.get("/api/doctors");
     console.log('Raw API response:', response);
     
     let doctorsData = response.data;
@@ -147,16 +137,15 @@ export const listDoctors = () => async (dispatch) => {
 export const getDoctorDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_DETAILS_REQUEST });
-    const { data } = await api.get(`/api/doctors/${id}`);
-    const validatedData = validateDoctorData(data);
+    const { data } = await axios.get(`/api/doctors/${id}`);
     dispatch({
       type: DOCTOR_DETAILS_SUCCESS,
-      payload: validatedData,
+      payload: data,
     });
   } catch (error) {
     dispatch({
       type: DOCTOR_DETAILS_FAIL,
-      payload: handleError(error),
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -164,16 +153,15 @@ export const getDoctorDetails = (id) => async (dispatch) => {
 export const listDoctorsBySpeciality = (specialty) => async (dispatch) => {
   try {
     dispatch({ type: DOCTOR_LIST_BY_SPECIALITY_REQUEST });
-    const { data } = await api.get(`/api/doctors/specialty/${specialty}`);
-    const validatedData = validateDoctorData(data, true);
+    const { data } = await axios.get(`/api/doctors/specialty/${specialty}`);
     dispatch({
       type: DOCTOR_LIST_BY_SPECIALITY_SUCCESS,
-      payload: validatedData,
+      payload: data,
     });
   } catch (error) {
     dispatch({
       type: DOCTOR_LIST_BY_SPECIALITY_FAIL,
-      payload: handleError(error),
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -196,7 +184,7 @@ export const updateDoctor = (doctor) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await api.put(`/api/doctors/${doctor._id}`, doctor, config);
+    const { data } = await axios.put(`/api/doctors/${doctor._id}`, doctor, config);
     const validatedData = validateDoctorData(data);
     dispatch({ type: DOCTOR_UPDATE_SUCCESS, payload: validatedData });
   } catch (error) {
