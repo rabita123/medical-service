@@ -21,13 +21,15 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-  }
+  },
+  withCredentials: false,
+  timeout: 10000
 });
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
-    console.log('Making request to:', config.url);
+    console.log('Making request to:', config.url, 'with config:', config);
     return config;
   },
   (error) => {
@@ -47,8 +49,9 @@ api.interceptors.response.use(
     if (error.response) {
       console.error('Error Response Data:', error.response.data);
       console.error('Error Response Status:', error.response.status);
+      console.error('Error Response Headers:', error.response.headers);
     } else if (error.request) {
-      console.error('No response received');
+      console.error('No response received. Request:', error.request);
     } else {
       console.error('Error setting up request:', error.message);
     }
@@ -80,6 +83,15 @@ export const listDoctors = () => async (dispatch) => {
     dispatch({ type: DOCTOR_LIST_REQUEST });
     
     console.log('Fetching doctors list...');
+    
+    // First try to verify the API is accessible
+    try {
+      const testResponse = await fetch('https://medical-service-backend-eg8t.onrender.com/api/doctors');
+      console.log('Test fetch response:', testResponse);
+    } catch (testError) {
+      console.error('Test fetch failed:', testError);
+    }
+    
     const response = await api.get("/api/doctors");
     console.log('Raw API response:', response);
     
@@ -88,7 +100,11 @@ export const listDoctors = () => async (dispatch) => {
 
     // Ensure we have an array of doctors
     if (!Array.isArray(doctorsData)) {
-      doctorsData = doctorsData.doctors || [];
+      if (typeof doctorsData === 'object' && doctorsData !== null) {
+        doctorsData = doctorsData.doctors || [doctorsData];
+      } else {
+        doctorsData = [];
+      }
     }
 
     // Validate each doctor object
@@ -119,9 +135,17 @@ export const listDoctors = () => async (dispatch) => {
       response: error.response,
       request: error.request,
     });
+    
+    let errorMessage = 'Failed to fetch doctors';
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     dispatch({
       type: DOCTOR_LIST_FAIL,
-      payload: error.response?.data?.message || error.message || 'Failed to fetch doctors',
+      payload: errorMessage,
     });
   }
 };
