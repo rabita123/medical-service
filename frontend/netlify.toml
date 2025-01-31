@@ -1,11 +1,14 @@
 [build]
-  command = "CI=false npm run build"
+  command = "CI=false NODE_OPTIONS=--openssl-legacy-provider npm run build"
   publish = "build"
 
 [build.environment]
   NODE_ENV = "production"
   CI = "false"
   NODE_OPTIONS = "--openssl-legacy-provider"
+  DISABLE_ESLINT_PLUGIN = "true"
+  SKIP_PREFLIGHT_CHECK = "true"
+  GENERATE_SOURCEMAP = "false"
 
 [[redirects]]
   from = "/api/*"
@@ -25,4 +28,5 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization" 
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    Cache-Control = "no-cache, no-store, must-revalidate" 
