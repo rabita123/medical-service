@@ -3,7 +3,6 @@ import { Row, Col, Container, Card } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listDoctors } from "../actions/doctorActions";
-import { listSpecialists } from "../actions/specialistActions";
 import { listSliders } from "../actions/sliderActions";
 import { listTestCategories } from "../actions/testCategoriesActions";
 import Slider from "react-slick";
@@ -39,47 +38,31 @@ const CustomPrevArrow = ({ className, style, onClick }) => (
   </div>
 );
 
-const specialties = [
+const specialtiesData = [
   {
     id: 1,
     name: 'Cardiologist',
-    icon: 'fa-heart',
+    icon: 'heart',
+    description: 'Heart and cardiovascular specialists'
   },
   {
     id: 2,
     name: 'Dermatologist',
-    icon: 'fa-user-md',
+    icon: 'user-md',
+    description: 'Skin care specialists'
   },
   {
     id: 3,
     name: 'Neurologist',
-    icon: 'fa-brain',
+    icon: 'brain',
+    description: 'Brain and nervous system specialists'
   },
   {
     id: 4,
     name: 'Orthopedic',
-    icon: 'fa-bone',
-  },
-  {
-    id: 5,
-    name: 'Pediatrician',
-    icon: 'fa-child',
-  },
-  {
-    id: 6,
-    name: 'Psychiatrist',
-    icon: 'fa-comments',
-  },
-  {
-    id: 7,
-    name: 'Gynecologist',
-    icon: 'fa-female',
-  },
-  {
-    id: 8,
-    name: 'Dentist',
-    icon: 'fa-tooth',
-  },
+    icon: 'bone',
+    description: 'Bone and joint specialists'
+  }
 ];
 
 const HomeScreen = () => {
@@ -91,9 +74,6 @@ const HomeScreen = () => {
   const doctorList = useSelector((state) => state.doctorList);
   const { loading, error, doctors } = doctorList;
 
-  const specialistList = useSelector((state) => state.specialistList);
-  const { specialists } = specialistList;
-
   const sliderList = useSelector((state) => state.sliderList);
   const { sliders } = sliderList;
 
@@ -103,7 +83,6 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!dataFetched) {
       dispatch(listDoctors());
-      dispatch(listSpecialists());
       dispatch(listSliders());
       dispatch(listTestCategories());
       setDataFetched(true);
@@ -229,92 +208,91 @@ const HomeScreen = () => {
 
         <Container className="py-5">
           {/* Features Section */}
-          <section className="features-section mb-5">
-            <h2 className="text-center mb-5">Our Services</h2>
-            <Row>
-              {features.map((feature, index) => (
-                <Col key={index} md={3} className="mb-4">
-                  <Link to={`/services/${feature.title.toLowerCase().replace(/\s+/g, '-')}`} className="text-decoration-none">
-                    <Card className="text-center h-100 border-0 shadow-sm hover-effect">
-                      <Card.Body>
-                        <div className="text-primary mb-3">
+          <section className="features-section py-5">
+            <Container>
+              <h2 className="text-center mb-5">Our Services</h2>
+              <Row>
+                {features.map((feature, index) => (
+                  <Col key={index} md={3} className="mb-4">
+                    <Card className="h-100 service-card">
+                      <Card.Body className="text-center">
+                        <div className="service-icon mb-3">
                           <i className={`fas fa-${feature.icon} fa-3x`}></i>
                         </div>
                         <Card.Title>{feature.title}</Card.Title>
                         <Card.Text>{feature.description}</Card.Text>
                       </Card.Body>
                     </Card>
-                  </Link>
-                </Col>
-              ))}
-            </Row>
-          </section>
-
-          {/* Doctors Section */}
-          {loading ? (
-            <LoadingSpinner />
-          ) : error ? (
-            <ErrorMessage message={error} />
-          ) : (
-            <section className="doctors-section">
-              <h2 className="text-center mb-5">Our Expert Doctors</h2>
-              <Row>
-                {filteredDoctors.map((doctor) => (
-                  <Col key={doctor._id} sm={12} md={6} lg={4} xl={3}>
-                    <Link to={`/doctor/${doctor._id}`} className="text-decoration-none">
-                      <Card className="doctor-card mb-4 border-0 shadow-sm hover-effect">
-                        <div className="img-wrapper" style={{ height: "200px", overflow: "hidden" }}>
-                          <Card.Img
-                            variant="top"
-                            src={doctor.image}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "https://via.placeholder.com/300x300?text=Doctor";
-                            }}
-                            style={{ height: "100%", objectFit: "cover" }}
-                          />
-                        </div>
-                        <Card.Body className="text-center">
-                          <Card.Title className="text-dark">{doctor.name}</Card.Title>
-                          <Card.Text className="text-muted">{doctor.specialization}</Card.Text>
-                          <button className="btn btn-primary">
-                            View Profile
-                          </button>
-                        </Card.Body>
-                      </Card>
-                    </Link>
                   </Col>
                 ))}
               </Row>
-            </section>
-          )}
+            </Container>
+          </section>
 
           {/* Specialties Section */}
-          <section className="specialties-section py-5">
+          <section className="specialties-section py-5 bg-light">
             <Container>
               <h2 className="text-center mb-5">Our Specialties</h2>
               <Row>
-                {specialties.map((specialty) => (
-                  <Col key={specialty.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                {specialtiesData.map((specialty) => (
+                  <Col key={specialty.id} md={3} className="mb-4">
                     <Link 
                       to={`/doctors/specialty/${specialty.name.toLowerCase()}`} 
                       className="text-decoration-none"
                     >
-                      <Card className="specialty-card h-100">
+                      <Card className="h-100 specialty-card">
                         <Card.Body className="text-center">
                           <div className="specialty-icon mb-3">
-                            <i className={`fas ${specialty.icon} fa-2x`}></i>
+                            <i className={`fas fa-${specialty.icon} fa-3x text-primary`}></i>
                           </div>
-                          <h3 className="specialty-title">{specialty.name}</h3>
-                          <button className="btn btn-primary mt-3">
-                            Find Doctors
-                          </button>
+                          <Card.Title>{specialty.name}</Card.Title>
+                          <Card.Text>{specialty.description}</Card.Text>
                         </Card.Body>
                       </Card>
                     </Link>
                   </Col>
                 ))}
               </Row>
+            </Container>
+          </section>
+
+          {/* Doctors Section */}
+          <section className="doctors-section py-5">
+            <Container>
+              <h2 className="text-center mb-5">Our Expert Doctors</h2>
+              {loading ? (
+                <LoadingSpinner />
+              ) : error ? (
+                <ErrorMessage message={error} />
+              ) : (
+                <Row>
+                  {filteredDoctors.slice(0, 4).map((doctor) => (
+                    <Col key={doctor._id} md={3} className="mb-4">
+                      <Card className="h-100 doctor-card">
+                        <Card.Img
+                          variant="top"
+                          src={doctor.image || '/assets/img/doctors/doctor-thumb-01.jpg'}
+                          alt={doctor.name}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/assets/img/doctors/doctor-thumb-01.jpg';
+                          }}
+                        />
+                        <Card.Body>
+                          <Card.Title>{doctor.name}</Card.Title>
+                          <Card.Text>{doctor.specialization}</Card.Text>
+                          <Link 
+                            to={`/doctor/${doctor._id}`}
+                            className="btn btn-primary w-100"
+                          >
+                            View Profile
+                          </Link>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              )}
             </Container>
           </section>
         </Container>
