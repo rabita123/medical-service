@@ -17,19 +17,17 @@ import {
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: 'https://medical-service-backend-eg8t.onrender.com',
+  baseURL: '/api',
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Content-Type': 'application/json'
   },
-  withCredentials: false,
-  timeout: 10000
+  timeout: 15000
 });
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
-    console.log('Making request to:', config.url, 'with config:', config);
+    console.log('Making request to:', config.url);
     return config;
   },
   (error) => {
@@ -41,19 +39,15 @@ api.interceptors.request.use(
 // Add response interceptor for better error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('Raw response:', response);
+    console.log('Response received:', response.data);
     return response;
   },
   (error) => {
     console.error('API Error:', error);
     if (error.response) {
-      console.error('Error Response Data:', error.response.data);
-      console.error('Error Response Status:', error.response.status);
-      console.error('Error Response Headers:', error.response.headers);
+      console.error('Error Response:', error.response.data);
     } else if (error.request) {
-      console.error('No response received. Request:', error.request);
-    } else {
-      console.error('Error setting up request:', error.message);
+      console.error('No response received');
     }
     return Promise.reject(error);
   }
