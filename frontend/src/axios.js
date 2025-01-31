@@ -2,7 +2,7 @@ import axios from 'axios';
 import config from './config';
 
 const instance = axios.create({
-  baseURL: config.API_URL,
+  baseURL: config.NODE_ENV === 'production' ? config.PRODUCTION_API_URL : config.API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
