@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../config";
 import {
   DOCTOR_LIST_REQUEST,
   DOCTOR_LIST_SUCCESS,
@@ -16,7 +17,7 @@ import {
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: 'http://localhost:5001',
+  baseURL: config.NODE_ENV === 'production' ? config.PRODUCTION_API_URL : config.API_URL,
   headers: {
     'Content-Type': 'application/json'
   },
