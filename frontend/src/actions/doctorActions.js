@@ -19,7 +19,9 @@ import {
 const api = axios.create({
   baseURL: config.NODE_ENV === 'production' ? config.PRODUCTION_API_URL : config.API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': '*'
   },
   withCredentials: false
 });
@@ -80,19 +82,40 @@ export const listDoctors = () => async (dispatch) => {
     dispatch({ type: DOCTOR_LIST_REQUEST });
     
     console.log('Fetching doctors list...');
-    const { data } = await api.get("/api/doctors");
-    console.log('Doctors data received:', data);
+    const response = await api.get("/api/doctors");
+    console.log('Raw API response:', response);
     
-    if (!data) {
+    let doctorsData = response.data;
+    console.log('Response data:', doctorsData);
+
+    // Handle different response formats
+    if (!doctorsData) {
       throw new Error('No data received from server');
     }
 
+    // If the data is wrapped in a 'doctors' property, extract it
+    if (doctorsData.doctors) {
+      doctorsData = doctorsData.doctors;
+    }
+
+    // Ensure we have an array
+    if (!Array.isArray(doctorsData)) {
+      doctorsData = [doctorsData];
+    }
+
+    console.log('Processed doctors data:', doctorsData);
+
     dispatch({
       type: DOCTOR_LIST_SUCCESS,
-      payload: Array.isArray(data) ? data : data.doctors || [],
+      payload: doctorsData,
     });
   } catch (error) {
     console.error('Error fetching doctors:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response,
+      request: error.request,
+    });
     dispatch({
       type: DOCTOR_LIST_FAIL,
       payload: error.response?.data?.message || error.message || 'Failed to fetch doctors',
